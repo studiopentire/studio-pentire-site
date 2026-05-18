@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Editions — Studio Pentire</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;1,400&family=IBM+Plex+Mono:ital,wght@0,300;0,400;1,300&family=Archivo:ital,wght@0,400;0,500;0,700;0,900;1,400&display=swap" rel="stylesheet">
+
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
+:root{
+  --bg:     #faf7f0;
+  --ink:    #2c2636;
+  --mid:    #f2ede3;
+  --muted:  rgba(44,38,54,0.42);
+  --faint:  rgba(44,38,54,0.18);
+  --rule-v: #2c2636;
+  --glass:  #5ee8ba;
+  --blue:   #2e2d80;
+  --sunset: #fbcda2;
+}
+
+html{background:var(--bg);color:var(--ink);scroll-behavior:smooth;}
+body{font-family:'Archivo',sans-serif;overflow-x:hidden;}
+
+/* ══════════════════════════════════════
+   NAV
+══════════════════════════════════════ */
+nav{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:1.4rem 3rem;
+  position:sticky;top:0;background:var(--bg);z-index:100;
+}
+.nav-wordmark{
+  font-family:'Lora',serif;font-weight:400;
+  font-size:1.3rem;color:var(--ink);text-decoration:none;
+}
+.nav-wordmark em{font-style:italic;}
+.nav-links{list-style:none;display:flex;gap:2.4rem;align-items:center;}
+.nav-links a{
+  font-family:'Archivo',sans-serif;font-weight:500;
+  font-size:0.72rem;letter-spacing:0.02em;
+  color:var(--ink);text-decoration:none;opacity:0.45;
+  transition:opacity 0.18s;
+}
+.nav-links a:hover,.nav-links a.active{opacity:1;}
+.nav-links .cta{
+  opacity:1;border:1px solid var(--ink);
+  padding:0.4rem 1rem;font-size:0.65rem;letter-spacing:0.08em;
+  transition:background 0.2s,color 0.2s;
+}
+.nav-links .cta:hover{background:var(--ink);color:var(--bg);}
+.nav-menu-btn{display:none;}
+.nav-overlay{
+  position:fixed;inset:0;background:var(--bg);z-index:200;
+  display:flex;flex-direction:column;padding:1.2rem 1.4rem;
+  transform:translateX(100%);
+  transition:transform 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+.nav-overlay.open{transform:translateX(0);}
+.nav-overlay-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:3rem;}
+.nav-close{
+  font-family:'IBM Plex Mono',monospace;font-size:0.58rem;letter-spacing:0.16em;
+  text-transform:uppercase;color:var(--muted);background:none;border:none;cursor:pointer;
+}
+.nav-overlay-links{list-style:none;display:flex;flex-direction:column;flex:1;justify-content:center;}
+.nav-overlay-links li{border-top:0.5px solid var(--faint);}
+.nav-overlay-links li:last-child{border-bottom:0.5px solid var(--faint);}
+.nav-overlay-links a{
+  font-family:'Lora',serif;font-weight:400;font-style:italic;
+  font-size:2.2rem;letter-spacing:-0.01em;
+  color:var(--ink);text-decoration:none;display:block;padding:1rem 0;
+}
+.nav-overlay-footer{font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.12em;color:var(--muted);}
+
+/* ══════════════════════════════════════
+   PAGE HEADER
+══════════════════════════════════════ */
+.page-header{
+  padding:5rem 3rem 4rem;
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:4rem;align-items:end;
+  border-bottom:1px solid var(--rule-v);
+}
+.page-title{
+  font-family:'Lora',serif;font-weight:400;
+  font-size:clamp(3rem,6vw,5rem);
+  line-height:1;letter-spacing:-0.02em;color:var(--ink);
+}
+.page-title em{font-style:italic;}
+.page-intro{
+  font-family:'Archivo',sans-serif;font-weight:400;
+  font-size:0.95rem;line-height:1.75;
+  color:var(--ink);opacity:0.6;max-width:42ch;
+}
+.page-meta{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:0.56rem;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--muted);margin-top:1.4rem;display:flex;gap:2rem;flex-wrap:wrap;
+}
+
+/* ══════════════════════════════════════
+   COLLECTION HEADER
+══════════════════════════════════════ */
+.collection-header{
+  padding:1rem 3rem;
+  background:var(--mid);
+  display:flex;justify-content:space-between;align-items:center;
+}
+.collection-header span{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:0.56rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--muted);
+}
+.collection-header .accent{color:var(--sunset);}
+
+/* ══════════════════════════════════════
+   PRINT — desktop
+══════════════════════════════════════ */
+.print{
+  display:grid;
+  min-height:85vh;
+  border-bottom:1px solid var(--rule-v);
+}
+.print-l{grid-template-columns:3fr 2fr;}
+.print-r{grid-template-columns:2fr 3fr;}
+
+.print-image{
+  overflow:hidden;background:var(--mid);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+}
+.print-l .print-image{border-right:1px solid var(--rule-v);}
+.print-r .print-image{border-left:1px solid var(--rule-v);order:2;}
+.print-image img{width:72%;display:block;transition:transform 0.6s ease;}
+.print-image:hover img{transform:scale(1.02);}
+
+.print-ref{
+  position:absolute;top:1.4rem;left:1.4rem;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:0.52rem;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--sunset);display:flex;align-items:center;gap:0.5rem;
+}
+.print-ref::before{content:'';width:1rem;height:1px;background:var(--sunset);}
+
+.print-info{
+  padding:4rem 3rem;
+  display:flex;flex-direction:column;justify-content:space-between;
+}
+.print-r .print-info{order:1;}
+
+.print-index{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:0.54rem;letter-spacing:0.22em;text-transform:uppercase;
+  color:var(--muted);display:flex;align-items:center;gap:0.8rem;
+}
+.print-index::before{content:'';width:1.5rem;height:1px;background:var(--muted);}
+
+.print-series{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:0.54rem;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--sunset);margin-bottom:0.5rem;
+  display:flex;align-items:center;gap:0.6rem;
+}
+.print-series::before{content:'';width:1rem;height:1px;background:var(--sunset);}
+
+.print-title{
+  font-family:'Lora',serif;font-weight:400;font-style:italic;
+  font-size:clamp(2.5rem,4vw,4rem);
+  line-height:1;letter-spacing:-0.02em;color:var(--ink);
+}
+.print-desc{
+  font-family:'Archivo',sans-serif;font-weight:400;
+  font-size:0.9rem;line-height:1.75;
+  color:var(--ink);opacity:0.6;max-width:36ch;
+}
+
+.print-specs{
+  display:grid;grid-template-columns:1fr 1fr;
+  border-top:0.5px solid var(--faint);
+}
+.spec-row{
+  padding:0.8rem 0;border-bottom:0.5px solid var(--faint);
+  display:flex;flex-direction:column;gap:0.2rem;
+}
+.spec-row:nth-child(odd){padding-right:1.5rem;}
+.spec-label{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:0.5rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);
+}
+.spec-value{
+  font-family:'Archivo',sans-serif;font-weight:500;font-size:0.82rem;color:var(--ink);
+}
+
+.print-price{
+  font-family:'Lora',serif;font-style:italic;
+  font-size:1.4rem;color:var(--ink);opacity:0.7;
+}
+.print-price-note{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:0.5rem;letter-spacing:0.12em;color:var(--muted);margin-bottom:2rem;
+}
+.btn-enquire{
+  font-family:'Archivo',sans-serif;font-weight:700;
+  font-size:0.72rem;letter-spacing:0.08em;
+  background:var(--ink);color:var(--bg);
+  border:none;padding:1rem 2rem;cursor:pointer;
+  display:inline-flex;align-items:center;gap:0.8rem;
+  text-decoration:none;width:fit-content;transition:opacity 0.2s;
+  margin-bottom:0.6rem;
+}
+.btn-enquire:hover{opacity:0.82;}
+.btn-enquire-note{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:0.5rem;letter-spacing:0.1em;color:var(--muted);
+}
+
+/* ══════════════════════════════════════
+   EDITIONS TABLE — desktop only
+══════════════════════════════════════ */
+.editions-table-wrap{}
+.editions-table{width:100%;border-collapse:collapse;}
+.editions-table th{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:0.52rem;letter-spacing:0.22em;text-transform:uppercase;
+  color:var(--muted);text-align:left;
+  padding:1rem 3rem;border-bottom:0.5px solid var(--faint);font-weight:400;
+}
+.editions-table td{
+  padding:1.4rem 3rem;border-bottom:0.5px solid var(--faint);vertical-align:middle;
+}
+.editions-table tr{transition:background 0.18s;cursor:pointer;}
+.editions-table tr:hover{background:var(--mid);}
+.td-num{font-family:'IBM Plex Mono',monospace;font-size:0.54rem;letter-spacing:0.14em;color:var(--muted);}
+.td-title{font-family:'Lora',serif;font-style:italic;font-size:1.3rem;color:var(--ink);}
+.td-series{font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--sunset);}
+.td-size{font-family:'Archivo',sans-serif;font-weight:400;font-size:0.8rem;color:var(--ink);opacity:0.55;}
+.td-edition{font-family:'IBM Plex Mono',monospace;font-size:0.54rem;letter-spacing:0.1em;color:var(--muted);}
+.td-price{font-family:'Lora',serif;font-style:italic;font-size:1rem;color:var(--ink);opacity:0.7;text-align:right;}
+.td-arrow{font-family:'Archivo',sans-serif;font-size:1rem;color:var(--ink);opacity:0.2;text-align:right;}
+
+/* Mobile list — hidden on desktop */
+.editions-list{display:none;}
+
+/* ══════════════════════════════════════
+   FOOTER
+══════════════════════════════════════ */
+footer{
+  padding:1.4rem 3rem;
+  display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
+}
+.footer-mark{font-family:'Lora',serif;font-weight:400;font-size:0.9rem;opacity:0.25;color:var(--ink);text-decoration:none;}
+.footer-mark em{font-style:italic;}
+.footer-links{display:flex;gap:2rem;list-style:none;}
+.footer-links a{font-family:'Archivo',sans-serif;font-weight:400;font-size:0.65rem;letter-spacing:0.06em;color:var(--ink);text-decoration:none;opacity:0.35;transition:opacity 0.18s;}
+.footer-links a:hover{opacity:1;}
+.footer-copy{font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.1em;color:var(--muted);text-align:right;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(1rem)}to{opacity:1;transform:translateY(0)}}
+.page-title{animation:fadeUp 0.7s ease both;}
+
+/* ══════════════════════════════════════
+   MOBILE
+══════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  nav{padding:1.2rem 1.4rem;}
+  .nav-links{display:none;}
+  .nav-menu-btn{
+    display:flex;flex-direction:column;gap:5px;
+    cursor:pointer;padding:4px;background:none;border:none;
+  }
+  .nav-menu-btn span{display:block;width:22px;height:1px;background:var(--ink);}
+
+  .page-header{
+    padding:2.8rem 1.4rem 2rem;
+    display:block;
+  }
+  .page-title{font-size:2.8rem;margin-bottom:1rem;}
+  .page-meta{gap:1rem;}
+
+  .collection-header{padding:0.8rem 1.4rem;}
+
+  /* Prints — stack vertically */
+  .print{
+    display:block;min-height:auto;
+    border-bottom:0.5px solid var(--faint);
+    padding-bottom:3rem;
+  }
+  .print-image{
+    padding:2rem 0;border-right:none !important;
+    border-left:none !important;
+  }
+  .print-image img{width:72%;}
+  .print-r .print-image{order:unset;}
+  .print-r .print-info{order:unset;}
+  .print-info{padding:1.8rem 1.4rem 0;}
+  .print-desc{max-width:100%;}
+  .btn-enquire{width:100%;justify-content:center;}
+
+  /* Hide desktop table, show mobile list */
+  .editions-table-wrap{display:none;}
+  .editions-list{
+    display:flex;flex-direction:column;
+  }
+  .edition-row{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:1.2rem 1.4rem;
+    border-bottom:0.5px solid var(--faint);
+    text-decoration:none;color:var(--ink);
+    transition:background 0.18s;
+  }
+  .edition-row:hover{background:var(--mid);}
+  .edition-left{display:flex;flex-direction:column;gap:0.2rem;}
+  .edition-ref{font-family:'IBM Plex Mono',monospace;font-size:0.5rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);}
+  .edition-title{font-family:'Lora',serif;font-style:italic;font-size:1.2rem;color:var(--ink);}
+  .edition-series{font-family:'IBM Plex Mono',monospace;font-size:0.48rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--sunset);}
+  .edition-right{display:flex;flex-direction:column;align-items:flex-end;gap:0.2rem;}
+  .edition-price{font-family:'Lora',serif;font-style:italic;font-size:1rem;color:var(--ink);opacity:0.65;}
+  .edition-arrow{font-family:'Archivo',sans-serif;font-size:0.9rem;color:var(--ink);opacity:0.2;}
+
+  footer{padding:1.2rem 1.4rem;display:flex;justify-content:space-between;}
+  .footer-links{display:none;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-wordmark">Studio <em>Pentire</em></a>
+  <ul class="nav-links">
+    <li><a href="editions.html" class="active">Editions</a></li>
+    <li><a href="elements.html">Elements</a></li>
+    <li><a href="work.html">Illustration</a></li>
+    <li><a href="studio.html">Studio</a></li>
+    <li><a href="mailto:hello@studiopentire.co.uk" class="cta">Commission</a></li>
+  </ul>
+  <button class="nav-menu-btn" onclick="openNav()">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="nav-overlay" id="navOverlay">
+  <div class="nav-overlay-top">
+    <a href="index.html" class="nav-wordmark">Studio <em>Pentire</em></a>
+    <button class="nav-close" onclick="closeNav()">Close ×</button>
+  </div>
+  <ul class="nav-overlay-links">
+    <li><a href="editions.html" onclick="closeNav()">Editions</a></li>
+    <li><a href="elements.html" onclick="closeNav()">Elements</a></li>
+    <li><a href="work.html" onclick="closeNav()">Illustration</a></li>
+    <li><a href="studio.html" onclick="closeNav()">Studio</a></li>
+    <li><a href="mailto:hello@studiopentire.co.uk" onclick="closeNav()">Commission</a></li>
+  </ul>
+  <p class="nav-overlay-footer">Cornwall | UK | © 2026</p>
+</div>
+
+<header class="page-header">
+  <div>
+    <h1 class="page-title">Ground-<br><em>Mass</em></h1>
+    <div class="page-meta">
+      <span>Limited editions</span>
+      <span>Archival prints</span>
+      <span>Signed &amp; numbered</span>
+    </div>
+  </div>
+  <p class="page-intro">A series of limited edition archival pigment prints. Each work signed and numbered by the studio. Released in seasonal collections — Aureate is the first.</p>
+</header>
+
+<div class="collection-header">
+  <span>Aureate Collection</span>
+  <span class="accent">S/S 2026 · 3 editions</span>
+</div>
+
+<!-- PRINT 1 -->
+<section class="print print-l">
+  <div class="print-image">
+    <span class="print-ref">SP–001</span>
+    <img src="/images/aureate-001.jpg" alt="Threshold I">
+  </div>
+  <div class="print-info">
+    <p class="print-index">001</p>
+    <div>
+      <p class="print-series">Ground-Mass / Aureate</p>
+      <h2 class="print-title">Threshold I</h2>
+    </div>
+    <p class="print-desc">Stacked semi-circles in forest green and slate, a coral form rising from a field of horizontal lines. Balance and tension held in stillness.</p>
+    <div class="print-specs">
+      <div class="spec-row"><span class="spec-label">Size</span><span class="spec-value">A2 · 420×594mm</span></div>
+      <div class="spec-row"><span class="spec-label">Edition</span><span class="spec-value">1 of 50</span></div>
+      <div class="spec-row"><span class="spec-label">Paper</span><span class="spec-value">Hahnemühle 308gsm</span></div>
+      <div class="spec-row"><span class="spec-label">Finish</span><span class="spec-value">Signed &amp; numbered</span></div>
+    </div>
+    <div>
+      <p class="print-price">£185</p>
+      <p class="print-price-note">+ P&amp;P · Free UK delivery over £200</p>
+      <a href="mailto:hello@studiopentire.co.uk?subject=Enquiry — Threshold I (SP–001)" class="btn-enquire">Enquire to buy →</a>
+      <p class="btn-enquire-note">Printspace fulfilment coming soon</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRINT 2 -->
+<section class="print print-r">
+  <div class="print-info">
+    <p class="print-index">002</p>
+    <div>
+      <p class="print-series">Ground-Mass / Aureate</p>
+      <h2 class="print-title">Aureate Field II</h2>
+    </div>
+    <p class="print-desc">Three descending bowls in deep forest, a grey circle anchoring the base. Quiet accumulation. The weight of things stacked with care.</p>
+    <div class="print-specs">
+      <div class="spec-row"><span class="spec-label">Size</span><span class="spec-value">A2 · 420×594mm</span></div>
+      <div class="spec-row"><span class="spec-label">Edition</span><span class="spec-value">1 of 50</span></div>
+      <div class="spec-row"><span class="spec-label">Paper</span><span class="spec-value">Hahnemühle 308gsm</span></div>
+      <div class="spec-row"><span class="spec-label">Finish</span><span class="spec-value">Signed &amp; numbered</span></div>
+    </div>
+    <div>
+      <p class="print-price">£185</p>
+      <p class="print-price-note">+ P&amp;P · Free UK delivery over £200</p>
+      <a href="mailto:hello@studiopentire.co.uk?subject=Enquiry — Aureate Field II (SP–002)" class="btn-enquire">Enquire to buy →</a>
+      <p class="btn-enquire-note">Printspace fulfilment coming soon</p>
+    </div>
+  </div>
+  <div class="print-image">
+    <span class="print-ref">SP–002</span>
+    <img src="/images/aureate-002.jpg" alt="Aureate Field II">
+  </div>
+</section>
+
+<!-- PRINT 3 -->
+<section class="print print-l">
+  <div class="print-image">
+    <span class="print-ref">SP–003</span>
+    <img src="/images/aureate-003.jpg" alt="Low Horizon">
+  </div>
+  <div class="print-info">
+    <p class="print-index">003</p>
+    <div>
+      <p class="print-series">Ground-Mass / Aureate</p>
+      <h2 class="print-title">Low Horizon</h2>
+    </div>
+    <p class="print-desc">Three dark forms above a coral sun setting into a sea of lines. The horizon held low, as if the weight of the sky is pressing down.</p>
+    <div class="print-specs">
+      <div class="spec-row"><span class="spec-label">Size</span><span class="spec-value">A2 · 420×594mm</span></div>
+      <div class="spec-row"><span class="spec-label">Edition</span><span class="spec-value">1 of 50</span></div>
+      <div class="spec-row"><span class="spec-label">Paper</span><span class="spec-value">Hahnemühle 308gsm</span></div>
+      <div class="spec-row"><span class="spec-label">Finish</span><span class="spec-value">Signed &amp; numbered</span></div>
+    </div>
+    <div>
+      <p class="print-price">£185</p>
+      <p class="print-price-note">+ P&amp;P · Free UK delivery over £200</p>
+      <a href="mailto:hello@studiopentire.co.uk?subject=Enquiry — Low Horizon (SP–003)" class="btn-enquire">Enquire to buy →</a>
+      <p class="btn-enquire-note">Printspace fulfilment coming soon</p>
+    </div>
+  </div>
+</section>
+
+<!-- ALL EDITIONS — desktop table -->
+<div class="collection-header">
+  <span>All Editions</span>
+  <span>Ground-Mass Series</span>
+</div>
+
+<div class="editions-table-wrap">
+  <table class="editions-table">
+    <thead>
+      <tr>
+        <th>Ref</th><th>Title</th><th>Collection</th>
+        <th>Size</th><th>Edition</th>
+        <th style="text-align:right;">Price</th><th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr onclick="window.location.href='mailto:hello@studiopentire.co.uk?subject=Enquiry — Threshold I'">
+        <td class="td-num">SP–001</td><td class="td-title">Threshold I</td>
+        <td class="td-series">Aureate</td><td class="td-size">A2 · 420×594mm</td>
+        <td class="td-edition">1 of 50</td><td class="td-price">£185</td>
+        <td class="td-arrow">→</td>
+      </tr>
+      <tr onclick="window.location.href='mailto:hello@studiopentire.co.uk?subject=Enquiry — Aureate Field II'">
+        <td class="td-num">SP–002</td><td class="td-title">Aureate Field II</td>
+        <td class="td-series">Aureate</td><td class="td-size">A2 · 420×594mm</td>
+        <td class="td-edition">1 of 50</td><td class="td-price">£185</td>
+        <td class="td-arrow">→</td>
+      </tr>
+      <tr onclick="window.location.href='mailto:hello@studiopentire.co.uk?subject=Enquiry — Low Horizon'">
+        <td class="td-num">SP–003</td><td class="td-title">Low Horizon</td>
+        <td class="td-series">Aureate</td><td class="td-size">A2 · 420×594mm</td>
+        <td class="td-edition">1 of 50</td><td class="td-price">£185</td>
+        <td class="td-arrow">→</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ALL EDITIONS — mobile list -->
+<div class="editions-list">
+  <a href="mailto:hello@studiopentire.co.uk?subject=Enquiry — Threshold I" class="edition-row">
+    <div class="edition-left">
+      <span class="edition-ref">SP–001</span>
+      <span class="edition-title">Threshold I</span>
+      <span class="edition-series">Aureate</span>
+    </div>
+    <div class="edition-right">
+      <span class="edition-price">£185</span>
+      <span class="edition-arrow">→</span>
+    </div>
+  </a>
+  <a href="mailto:hello@studiopentire.co.uk?subject=Enquiry — Aureate Field II" class="edition-row">
+    <div class="edition-left">
+      <span class="edition-ref">SP–002</span>
+      <span class="edition-title">Aureate Field II</span>
+      <span class="edition-series">Aureate</span>
+    </div>
+    <div class="edition-right">
+      <span class="edition-price">£185</span>
+      <span class="edition-arrow">→</span>
+    </div>
+  </a>
+  <a href="mailto:hello@studiopentire.co.uk?subject=Enquiry — Low Horizon" class="edition-row">
+    <div class="edition-left">
+      <span class="edition-ref">SP–003</span>
+      <span class="edition-title">Low Horizon</span>
+      <span class="edition-series">Aureate</span>
+    </div>
+    <div class="edition-right">
+      <span class="edition-price">£185</span>
+      <span class="edition-arrow">→</span>
+    </div>
+  </a>
+</div>
+
+<footer>
+  <a href="index.html" class="footer-mark">Studio <em>Pentire</em></a>
+  <ul class="footer-links">
+    <li><a href="editions.html">Editions</a></li>
+    <li><a href="elements.html">Elements</a></li>
+    <li><a href="work.html">Illustration</a></li>
+    <li><a href="mailto:hello@studiopentire.co.uk">Commission</a></li>
+  </ul>
+  <p class="footer-copy">Cornwall | UK | © 2026</p>
+</footer>
+
+<script>
+function openNav(){document.getElementById('navOverlay').classList.add('open');}
+function closeNav(){document.getElementById('navOverlay').classList.remove('open');}
+</script>
+
+</body>
+</html>

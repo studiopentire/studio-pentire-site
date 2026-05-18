@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Illustration — Studio Pentire</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;1,400&family=IBM+Plex+Mono:ital,wght@0,300;0,400;1,300&family=Archivo:ital,wght@0,400;0,500;0,700;0,900;1,400&display=swap" rel="stylesheet">
+
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
+:root{
+  --bg:     #faf7f0;
+  --ink:    #2c2636;
+  --mid:    #f2ede3;
+  --muted:  rgba(44,38,54,0.42);
+  --faint:  rgba(44,38,54,0.18);
+  --rule-v: #2c2636;
+  --glass:  #5ee8ba;
+  --blue:   #2e2d80;
+  --sunset: #fbcda2;
+}
+
+html{background:var(--bg);color:var(--ink);scroll-behavior:smooth;}
+body{font-family:'Archivo',sans-serif;overflow-x:hidden;}
+
+/* ══════════════════════════════════════
+   NAV
+══════════════════════════════════════ */
+nav{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:1.4rem 3rem;position:sticky;top:0;background:var(--bg);z-index:100;
+}
+.nav-wordmark{font-family:'Lora',serif;font-weight:400;font-size:1.3rem;color:var(--ink);text-decoration:none;}
+.nav-wordmark em{font-style:italic;}
+.nav-links{list-style:none;display:flex;gap:2.4rem;align-items:center;}
+.nav-links a{font-family:'Archivo',sans-serif;font-weight:500;font-size:0.72rem;letter-spacing:0.02em;color:var(--ink);text-decoration:none;opacity:0.45;transition:opacity 0.18s;}
+.nav-links a:hover,.nav-links a.active{opacity:1;}
+.nav-links .cta{opacity:1;border:1px solid var(--ink);padding:0.4rem 1rem;font-size:0.65rem;letter-spacing:0.08em;transition:background 0.2s,color 0.2s;}
+.nav-links .cta:hover{background:var(--ink);color:var(--bg);}
+.nav-menu-btn{display:none;}
+.nav-overlay{position:fixed;inset:0;background:var(--bg);z-index:200;display:flex;flex-direction:column;padding:1.2rem 1.4rem;transform:translateX(100%);transition:transform 0.4s cubic-bezier(0.4,0,0.2,1);}
+.nav-overlay.open{transform:translateX(0);}
+.nav-overlay-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:3rem;}
+.nav-close{font-family:'IBM Plex Mono',monospace;font-size:0.58rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);background:none;border:none;cursor:pointer;}
+.nav-overlay-links{list-style:none;display:flex;flex-direction:column;flex:1;justify-content:center;}
+.nav-overlay-links li{border-top:0.5px solid var(--faint);}
+.nav-overlay-links li:last-child{border-bottom:0.5px solid var(--faint);}
+.nav-overlay-links a{font-family:'Lora',serif;font-weight:400;font-style:italic;font-size:2.2rem;letter-spacing:-0.01em;color:var(--ink);text-decoration:none;display:block;padding:1rem 0;}
+.nav-overlay-footer{font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.12em;color:var(--muted);}
+
+/* ══════════════════════════════════════
+   PAGE HEADER
+══════════════════════════════════════ */
+.page-header{
+  padding:5rem 3rem 4rem;
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:4rem;align-items:end;
+}
+.page-title{font-family:'Lora',serif;font-weight:400;font-size:clamp(2.5rem,5vw,4.5rem);line-height:1;letter-spacing:-0.02em;color:var(--ink);}
+.page-title em{font-style:italic;}
+.page-intro{font-family:'Archivo',sans-serif;font-weight:400;font-size:0.95rem;line-height:1.75;color:var(--ink);opacity:0.6;max-width:42ch;}
+.page-meta{font-family:'IBM Plex Mono',monospace;font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-top:2rem;display:flex;gap:2rem;}
+
+/* ══════════════════════════════════════
+   WORKS — desktop alternating
+══════════════════════════════════════ */
+.work{
+  display:grid;min-height:90vh;
+}
+.work-1,.work-3{grid-template-columns:3fr 2fr;}
+.work-2{grid-template-columns:2fr 3fr;}
+
+.work-image{
+  overflow:hidden;background:var(--mid);
+  display:flex;align-items:center;justify-content:center;
+}
+.work-1 .work-image,.work-3 .work-image{border-right:1px solid var(--rule-v);}
+.work-2 .work-image{border-left:1px solid var(--rule-v);order:2;}
+.work-image img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.6s ease;}
+.work-image:hover img{transform:scale(1.02);}
+
+.work-info{padding:4rem 3rem;display:flex;flex-direction:column;justify-content:space-between;}
+.work-2 .work-info{order:1;}
+
+.work-index{font-family:'IBM Plex Mono',monospace;font-size:0.54rem;letter-spacing:0.24em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:0.8rem;}
+.work-index::before{content:'';width:1.5rem;height:1px;background:var(--muted);}
+.work-title{font-family:'Lora',serif;font-weight:400;font-style:italic;font-size:clamp(3rem,5vw,5rem);line-height:0.95;letter-spacing:-0.02em;color:var(--ink);}
+.work-year{font-family:'Lora',serif;font-style:italic;font-size:1rem;color:var(--muted);margin-top:0.8rem;}
+.work-desc{font-family:'Archivo',sans-serif;font-weight:400;font-size:0.9rem;line-height:1.75;color:var(--ink);opacity:0.6;max-width:34ch;}
+
+.work-details{display:flex;flex-direction:column;}
+.work-detail-row{display:flex;justify-content:space-between;padding:0.6rem 0;border-top:0.5px solid var(--faint);}
+.work-detail-label{font-family:'IBM Plex Mono',monospace;font-size:0.54rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);}
+.work-detail-value{font-family:'Archivo',sans-serif;font-style:italic;font-size:0.8rem;color:var(--ink);opacity:0.7;}
+
+.work-commission{font-family:'Archivo',sans-serif;font-style:italic;font-size:0.8rem;color:var(--blue);text-decoration:none;border-bottom:1px solid rgba(46,45,128,0.2);padding-bottom:0.2rem;display:inline-flex;align-items:center;gap:0.5rem;width:fit-content;transition:border-color 0.2s;}
+.work-commission:hover{border-color:var(--blue);}
+
+/* Mobile tap-reveal — hidden on desktop */
+.work-toggle-row{display:none;}
+.work-dropdown{max-height:0;overflow:hidden;}
+
+/* ══════════════════════════════════════
+   COMMISSION
+══════════════════════════════════════ */
+.commission-section{
+  padding:5rem 3rem;display:grid;grid-template-columns:1fr 1fr;
+  gap:4rem;align-items:center;
+}
+.commission-title{font-family:'Lora',serif;font-weight:400;font-size:clamp(2rem,3.5vw,3rem);line-height:1.1;color:var(--ink);}
+.commission-title em{font-style:italic;}
+.commission-body{font-family:'Archivo',sans-serif;font-weight:400;font-size:0.95rem;line-height:1.75;color:var(--ink);opacity:0.6;max-width:40ch;margin-bottom:2rem;}
+.btn-ink{font-family:'Archivo',sans-serif;font-weight:700;font-size:0.72rem;letter-spacing:0.08em;background:var(--ink);color:var(--bg);border:none;padding:1rem 2rem;display:inline-flex;align-items:center;gap:0.8rem;text-decoration:none;transition:opacity 0.2s;}
+.btn-ink:hover{opacity:0.8;}
+
+/* ══════════════════════════════════════
+   FOOTER
+══════════════════════════════════════ */
+footer{padding:1.4rem 3rem;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;}
+.footer-mark{font-family:'Lora',serif;font-weight:400;font-size:0.9rem;opacity:0.25;color:var(--ink);text-decoration:none;}
+.footer-mark em{font-style:italic;}
+.footer-links{display:flex;gap:2rem;list-style:none;}
+.footer-links a{font-family:'Archivo',sans-serif;font-weight:400;font-size:0.65rem;letter-spacing:0.06em;color:var(--ink);text-decoration:none;opacity:0.35;transition:opacity 0.18s;}
+.footer-links a:hover{opacity:1;}
+.footer-copy{font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.1em;color:var(--muted);text-align:right;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(1rem)}to{opacity:1;transform:translateY(0)}}
+.page-title{animation:fadeUp 0.7s ease both;}
+.page-intro{animation:fadeUp 0.7s 0.1s ease both;}
+
+/* ══════════════════════════════════════
+   MOBILE
+══════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  nav{padding:1.2rem 1.4rem;}
+  .nav-links{display:none;}
+  .nav-menu-btn{display:flex;flex-direction:column;gap:5px;cursor:pointer;padding:4px;background:none;border:none;}
+  .nav-menu-btn span{display:block;width:22px;height:1px;background:var(--ink);}
+
+  /* Page header — stack */
+  .page-header{padding:2.8rem 1.4rem 2rem;display:block;}
+  .page-title{font-size:2.6rem;margin-bottom:1rem;}
+  .page-meta{gap:1rem;flex-wrap:wrap;}
+
+  /* Works — mobile tap-reveal layout */
+  .work{
+    display:block;min-height:auto;
+    border-top:0.5px solid var(--faint);
+  }
+  .work:last-of-type{border-bottom:0.5px solid var(--faint);}
+
+  /* Hide desktop info panel */
+  .work-info{display:none;}
+
+  /* Image — full width */
+  .work-image{
+    min-height:auto;border-right:none !important;
+    border-left:none !important;cursor:pointer;
+  }
+  .work-image img{width:100%;height:auto;object-fit:contain;max-height:80vw;}
+  .work-2 .work-image{order:unset;}
+
+  /* Toggle row — always visible */
+  .work-toggle-row{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:1.1rem 1.4rem;cursor:pointer;
+    user-select:none;-webkit-tap-highlight-color:transparent;
+  }
+  .work-toggle-left{display:flex;flex-direction:column;gap:0.2rem;}
+  .work-toggle-index{font-family:'IBM Plex Mono',monospace;font-size:0.5rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);}
+  .work-toggle-title{font-family:'Lora',serif;font-style:italic;font-size:1.6rem;line-height:1;color:var(--ink);}
+  .work-toggle-btn{
+    width:28px;height:28px;border:0.5px solid var(--faint);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;transition:background 0.3s,border-color 0.3s;position:relative;
+  }
+  .work-toggle-btn::before,.work-toggle-btn::after{content:'';position:absolute;background:var(--ink);transition:transform 0.35s ease,opacity 0.35s ease;}
+  .work-toggle-btn::before{width:10px;height:1px;}
+  .work-toggle-btn::after{width:1px;height:10px;}
+  .work.open .work-toggle-btn{background:var(--ink);border-color:var(--ink);}
+  .work.open .work-toggle-btn::before{background:var(--bg);}
+  .work.open .work-toggle-btn::after{background:var(--bg);transform:rotate(90deg);opacity:0;}
+
+  /* Dropdown */
+  .work-dropdown{
+    max-height:0;overflow:hidden;
+    transition:max-height 0.5s cubic-bezier(0.4,0,0.2,1);
+    display:block;
+  }
+  .work.open .work-dropdown{max-height:600px;}
+  .work-dropdown-inner{padding:0 1.4rem 2rem;}
+  .work-dropdown-inner .work-desc{font-family:'Archivo',sans-serif;font-weight:400;font-size:0.85rem;line-height:1.75;color:var(--ink);opacity:0.6;margin-bottom:1.4rem;max-width:100%;}
+  .work-dropdown-inner .work-year{font-family:'Lora',serif;font-style:italic;font-size:0.85rem;color:var(--muted);margin-bottom:1rem;}
+  .work-dropdown-inner .work-details{display:flex;flex-direction:column;margin-bottom:1.4rem;}
+  .work-dropdown-inner .work-detail-row{display:flex;justify-content:space-between;padding:0.6rem 0;border-top:0.5px solid var(--faint);}
+  .work-dropdown-inner .work-commission{font-family:'Archivo',sans-serif;font-style:italic;font-size:0.8rem;color:var(--blue);text-decoration:none;border-bottom:1px solid rgba(46,45,128,0.2);padding-bottom:0.15rem;display:inline-flex;align-items:center;gap:0.4rem;}
+
+  /* Commission */
+  .commission-section{display:block;padding:3.5rem 1.4rem;background:var(--mid);}
+  .commission-title{font-size:2rem;margin-bottom:1rem;}
+  .commission-body{max-width:100%;}
+  .btn-ink{width:100%;justify-content:center;}
+
+  footer{padding:1.2rem 1.4rem;display:flex;justify-content:space-between;}
+  .footer-links{display:none;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-wordmark">Studio <em>Pentire</em></a>
+  <ul class="nav-links">
+    <li><a href="editions.html">Editions</a></li>
+    <li><a href="elements.html">Elements</a></li>
+    <li><a href="work.html" class="active">Illustration</a></li>
+    <li><a href="studio.html">Studio</a></li>
+    <li><a href="mailto:hello@studiopentire.co.uk" class="cta">Commission</a></li>
+  </ul>
+  <button class="nav-menu-btn" onclick="openNav()">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="nav-overlay" id="navOverlay">
+  <div class="nav-overlay-top">
+    <a href="index.html" class="nav-wordmark">Studio <em>Pentire</em></a>
+    <button class="nav-close" onclick="closeNav()">Close ×</button>
+  </div>
+  <ul class="nav-overlay-links">
+    <li><a href="editions.html" onclick="closeNav()">Editions</a></li>
+    <li><a href="elements.html" onclick="closeNav()">Elements</a></li>
+    <li><a href="work.html" onclick="closeNav()">Illustration</a></li>
+    <li><a href="studio.html" onclick="closeNav()">Studio</a></li>
+    <li><a href="mailto:hello@studiopentire.co.uk" onclick="closeNav()">Commission</a></li>
+  </ul>
+  <p class="nav-overlay-footer">Cornwall | UK | © 2026</p>
+</div>
+
+<header class="page-header">
+  <div>
+    <h1 class="page-title">The <em>work</em></h1>
+    <div class="page-meta">
+      <span>Digital collage</span>
+      <span>Cut-out spatial</span>
+      <span>Editorial</span>
+    </div>
+  </div>
+  <p class="page-intro">A body of digital collage work exploring cut-out spatial logic, alternate universes and surreal dimensionality. Available for editorial and commercial commission.</p>
+</header>
+
+<!-- WORK 1 — SPACEMOUTH -->
+<article class="work work-1" id="work-1">
+  <div class="work-image" onclick="toggleWork('work-1')">
+    <img src="/images/spacemouth.jpg" alt="Spacemouth">
+  </div>
+  <!-- Desktop info -->
+  <div class="work-info">
+    <p class="work-index">001</p>
+    <div>
+      <h2 class="work-title">Spacemouth</h2>
+      <p class="work-year">2012</p>
+    </div>
+    <p class="work-desc">Mountain, mouth, galaxy, architecture. Cut-out circle as portal — the negative space becomes a universe within a universe.</p>
+    <div class="work-details">
+      <div class="work-detail-row"><span class="work-detail-label">Medium</span><span class="work-detail-value">Digital collage</span></div>
+      <div class="work-detail-row"><span class="work-detail-label">Year</span><span class="work-detail-value">2012</span></div>
+      <div class="work-detail-row"><span class="work-detail-label">Type</span><span class="work-detail-value">Editorial</span></div>
+    </div>
+    <a href="mailto:hello@studiopentire.co.uk?subject=Commission enquiry — Spacemouth" class="work-commission">Commission similar work →</a>
+  </div>
+  <!-- Mobile toggle -->
+  <div class="work-toggle-row" onclick="toggleWork('work-1')">
+    <div class="work-toggle-left">
+      <span class="work-toggle-index">001</span>
+      <h2 class="work-toggle-title">Spacemouth</h2>
+    </div>
+    <div class="work-toggle-btn"></div>
+  </div>
+  <div class="work-dropdown">
+    <div class="work-dropdown-inner">
+      <p class="work-year">2012</p>
+      <p class="work-desc">Mountain, mouth, galaxy, architecture. Cut-out circle as portal — the negative space becomes a universe within a universe.</p>
+      <div class="work-details">
+        <div class="work-detail-row"><span class="work-detail-label">Medium</span><span class="work-detail-value">Digital collage</span></div>
+        <div class="work-detail-row"><span class="work-detail-label">Type</span><span class="work-detail-value">Editorial</span></div>
+      </div>
+      <a href="mailto:hello@studiopentire.co.uk?subject=Commission enquiry — Spacemouth" class="work-commission">Commission similar work →</a>
+    </div>
+  </div>
+</article>
+
+<!-- WORK 2 — FUTURE -->
+<article class="work work-2" id="work-2">
+  <div class="work-info">
+    <p class="work-index">002</p>
+    <div>
+      <h2 class="work-title">Future</h2>
+      <p class="work-year">2012</p>
+    </div>
+    <p class="work-desc">Retro-future collage. Woman, rocket, calculator, cosmos. Geometric shapes hold the tension between optimism and absurdity.</p>
+    <div class="work-details">
+      <div class="work-detail-row"><span class="work-detail-label">Medium</span><span class="work-detail-value">Digital collage</span></div>
+      <div class="work-detail-row"><span class="work-detail-label">Year</span><span class="work-detail-value">2012</span></div>
+      <div class="work-detail-row"><span class="work-detail-label">Type</span><span class="work-detail-value">Editorial / Commercial</span></div>
+    </div>
+    <a href="mailto:hello@studiopentire.co.uk?subject=Commission enquiry — Future" class="work-commission">Commission similar work →</a>
+  </div>
+  <div class="work-image" onclick="toggleWork('work-2')">
+    <img src="/images/future.jpg" alt="Future">
+  </div>
+  <div class="work-toggle-row" onclick="toggleWork('work-2')">
+    <div class="work-toggle-left">
+      <span class="work-toggle-index">002</span>
+      <h2 class="work-toggle-title">Future</h2>
+    </div>
+    <div class="work-toggle-btn"></div>
+  </div>
+  <div class="work-dropdown">
+    <div class="work-dropdown-inner">
+      <p class="work-year">2012</p>
+      <p class="work-desc">Retro-future collage. Woman, rocket, calculator, cosmos. Geometric shapes hold the tension between optimism and absurdity.</p>
+      <div class="work-details">
+        <div class="work-detail-row"><span class="work-detail-label">Medium</span><span class="work-detail-value">Digital collage</span></div>
+        <div class="work-detail-row"><span class="work-detail-label">Type</span><span class="work-detail-value">Editorial / Commercial</span></div>
+      </div>
+      <a href="mailto:hello@studiopentire.co.uk?subject=Commission enquiry — Future" class="work-commission">Commission similar work →</a>
+    </div>
+  </div>
+</article>
+
+<!-- WORK 3 — GEOMS -->
+<article class="work work-3" id="work-3">
+  <div class="work-image" onclick="toggleWork('work-3')">
+    <img src="/images/geoms.jpg" alt="Geoms">
+  </div>
+  <div class="work-info">
+    <p class="work-index">003</p>
+    <div>
+      <h2 class="work-title">Geoms</h2>
+      <p class="work-year">2024</p>
+    </div>
+    <p class="work-desc">Pure geometric abstraction. Circle, triangle, cube — stacked and layered, creating depth through repetition and shadow.</p>
+    <div class="work-details">
+      <div class="work-detail-row"><span class="work-detail-label">Medium</span><span class="work-detail-value">Digital</span></div>
+      <div class="work-detail-row"><span class="work-detail-label">Year</span><span class="work-detail-value">2024</span></div>
+      <div class="work-detail-row"><span class="work-detail-label">Type</span><span class="work-detail-value">Geometric abstraction</span></div>
+    </div>
+    <a href="mailto:hello@studiopentire.co.uk?subject=Commission enquiry — Geoms" class="work-commission">Commission similar work →</a>
+  </div>
+  <div class="work-toggle-row" onclick="toggleWork('work-3')">
+    <div class="work-toggle-left">
+      <span class="work-toggle-index">003</span>
+      <h2 class="work-toggle-title">Geoms</h2>
+    </div>
+    <div class="work-toggle-btn"></div>
+  </div>
+  <div class="work-dropdown">
+    <div class="work-dropdown-inner">
+      <p class="work-year">2024</p>
+      <p class="work-desc">Pure geometric abstraction. Circle, triangle, cube — stacked and layered, creating depth through repetition and shadow.</p>
+      <div class="work-details">
+        <div class="work-detail-row"><span class="work-detail-label">Medium</span><span class="work-detail-value">Digital</span></div>
+        <div class="work-detail-row"><span class="work-detail-label">Type</span><span class="work-detail-value">Geometric abstraction</span></div>
+      </div>
+      <a href="mailto:hello@studiopentire.co.uk?subject=Commission enquiry — Geoms" class="work-commission">Commission similar work →</a>
+    </div>
+  </div>
+</article>
+
+<section class="commission-section">
+  <h2 class="commission-title">Looking for something <em>specific?</em></h2>
+  <div>
+    <p class="commission-body">All illustration work is available for editorial and commercial commission. Each brief approached with the same spatial logic and surreal sensibility as the work above.</p>
+    <a href="mailto:hello@studiopentire.co.uk" class="btn-ink">Get in touch →</a>
+  </div>
+</section>
+
+<footer>
+  <a href="index.html" class="footer-mark">Studio <em>Pentire</em></a>
+  <ul class="footer-links">
+    <li><a href="editions.html">Editions</a></li>
+    <li><a href="elements.html">Elements</a></li>
+    <li><a href="work.html">Illustration</a></li>
+    <li><a href="mailto:hello@studiopentire.co.uk">Commission</a></li>
+  </ul>
+  <p class="footer-copy">Cornwall | UK | © 2026</p>
+</footer>
+
+<script>
+function openNav(){document.getElementById('navOverlay').classList.add('open');}
+function closeNav(){document.getElementById('navOverlay').classList.remove('open');}
+function toggleWork(id){
+  const work=document.getElementById(id);
+  const isOpen=work.classList.contains('open');
+  document.querySelectorAll('.work').forEach(w=>w.classList.remove('open'));
+  if(!isOpen)work.classList.add('open');
+}
+</script>
+
+</body>
+</html>

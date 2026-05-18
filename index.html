@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Studio Pentire</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;1,400&family=IBM+Plex+Mono:ital,wght@0,300;0,400;1,300&family=Archivo:ital,wght@0,400;0,500;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
+:root{
+  --bg:     #faf7f0;
+  --ink:    #2c2636;
+  --mid:    #f2ede3;
+  --muted:  rgba(44,38,54,0.42);
+  --faint:  rgba(44,38,54,0.18);
+  --rule-v: #2c2636;
+  --glass:  #5ee8ba;
+  --blue:   #2e2d80;
+  --sunset: #fbcda2;
+  --sand:   #f5ecc2;
+}
+
+html{background:var(--bg);color:var(--ink);scroll-behavior:smooth;}
+body{font-family:'Archivo',sans-serif;overflow-x:hidden;}
+
+/* ══════════════════════════════════════
+   NAV — desktop
+══════════════════════════════════════ */
+nav{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:1.4rem 3rem;
+  position:sticky;top:0;background:var(--bg);z-index:100;
+}
+.nav-wordmark{
+  font-family:'Lora',serif;font-weight:400;
+  font-size:1.3rem;color:var(--ink);text-decoration:none;
+}
+.nav-wordmark em{font-style:italic;}
+.nav-links{list-style:none;display:flex;gap:2.4rem;align-items:center;}
+.nav-links a{
+  font-family:'Archivo',sans-serif;font-weight:500;
+  font-size:0.72rem;letter-spacing:0.02em;
+  color:var(--ink);text-decoration:none;opacity:0.45;
+  transition:opacity 0.18s;
+}
+.nav-links a:hover{opacity:1;}
+.nav-links .cta{
+  opacity:1;border:1px solid var(--ink);
+  padding:0.4rem 1rem;font-size:0.65rem;letter-spacing:0.08em;
+  transition:background 0.2s,color 0.2s;
+}
+.nav-links .cta:hover{background:var(--ink);color:var(--bg);}
+
+/* Hamburger — hidden on desktop */
+.nav-menu-btn{display:none;}
+
+/* Mobile nav overlay */
+.nav-overlay{
+  position:fixed;inset:0;background:var(--bg);z-index:200;
+  display:flex;flex-direction:column;
+  padding:1.2rem 1.4rem;
+  transform:translateX(100%);
+  transition:transform 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+.nav-overlay.open{transform:translateX(0);}
+.nav-overlay-top{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:3rem;
+}
+.nav-close{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:0.58rem;letter-spacing:0.16em;text-transform:uppercase;
+  color:var(--muted);background:none;border:none;cursor:pointer;
+}
+.nav-overlay-links{
+  list-style:none;display:flex;flex-direction:column;
+  flex:1;justify-content:center;
+}
+.nav-overlay-links li{border-top:0.5px solid var(--faint);}
+.nav-overlay-links li:last-child{border-bottom:0.5px solid var(--faint);}
+.nav-overlay-links a{
+  font-family:'Lora',serif;font-weight:400;font-style:italic;
+  font-size:2.2rem;letter-spacing:-0.01em;
+  color:var(--ink);text-decoration:none;
+  display:block;padding:1rem 0;transition:opacity 0.2s;
+}
+.nav-overlay-links a:hover{opacity:0.5;}
+.nav-overlay-footer{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:0.52rem;letter-spacing:0.12em;color:var(--muted);
+}
+
+/* ══════════════════════════════════════
+   HERO — desktop
+══════════════════════════════════════ */
+.hero{
+  padding:5rem 3rem 0;
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:4rem;align-items:end;
+  min-height:70vh;
+}
+.hero-eyebrow{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:0.6rem;letter-spacing:0.24em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:2rem;
+}
+.hero-name{
+  font-family:'Lora',serif;font-weight:400;
+  font-size:clamp(3rem,6vw,5.5rem);
+  line-height:1;letter-spacing:-0.01em;color:var(--ink);
+  margin-bottom:1.4rem;
+}
+.hero-name em{font-style:italic;}
+.hero-location{
+  font-family:'Archivo',sans-serif;font-weight:400;
+  font-size:0.8rem;letter-spacing:0.08em;
+  color:var(--muted);margin-bottom:2.4rem;
+}
+.hero-statement{
+  font-family:'Archivo',sans-serif;font-weight:400;
+  font-size:1.1rem;line-height:1.65;letter-spacing:-0.01em;
+  color:var(--ink);max-width:38ch;opacity:0.75;
+}
+.hero-right{
+  display:flex;flex-direction:column;gap:1rem;
+  align-items:flex-end;padding-bottom:0.5rem;
+}
+.hero-img-wrap{width:100%;position:relative;}
+.hero-img-wrap img{width:100%;display:block;}
+.hero-edition-tag{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--glass);
+  display:flex;align-items:center;gap:0.6rem;
+  align-self:flex-start;
+}
+.hero-edition-tag::before{content:'';width:1.5rem;height:1px;background:var(--glass);}
+
+/* Mobile hero image offset — hidden on desktop */
+.hero-image-offset{display:none;}
+
+/* ══════════════════════════════════════
+   SECTION LABEL
+══════════════════════════════════════ */
+.section-label{
+  padding:0.9rem 3rem;
+  background:var(--mid);
+  display:flex;justify-content:space-between;align-items:center;
+  margin-top:3rem;
+}
+.section-label span{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:0.56rem;letter-spacing:0.28em;text-transform:uppercase;
+  color:var(--muted);
+}
+
+/* ══════════════════════════════════════
+   COLLECTIONS — desktop
+══════════════════════════════════════ */
+.collections{
+  display:grid;grid-template-columns:repeat(3,1fr);
+}
+.col-item{
+  padding:2.8rem 3rem;
+  border-right:1px solid var(--rule-v);
+  cursor:pointer;transition:background 0.25s;
+  position:relative;overflow:hidden;
+  text-decoration:none;color:var(--ink);display:block;
+}
+.col-item:last-child{border-right:none;}
+.col-item:hover{background:var(--mid);}
+.col-num{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:0.56rem;letter-spacing:0.22em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:2rem;
+}
+.col-title{
+  font-family:'Archivo',sans-serif;font-weight:900;
+  font-size:2.2rem;letter-spacing:-0.025em;text-transform:uppercase;
+  line-height:0.95;color:var(--ink);margin-bottom:0.6rem;
+}
+.col-type{
+  font-family:'IBM Plex Mono',monospace;font-size:0.58rem;
+  color:var(--muted);letter-spacing:0.1em;margin-bottom:2.4rem;
+}
+.col-cta{
+  font-family:'Archivo',sans-serif;font-weight:500;
+  font-size:0.65rem;letter-spacing:0.06em;
+  color:var(--ink);display:inline-flex;gap:0.5rem;
+  opacity:0.45;transition:opacity 0.2s;
+}
+.col-item:hover .col-cta{opacity:1;}
+.col-item::after{
+  content:'';position:absolute;
+  bottom:0;left:0;right:0;height:2px;
+  transform:scaleX(0);transform-origin:left;
+  transition:transform 0.3s ease;
+}
+.col-item:nth-child(1)::after{background:var(--blue);}
+.col-item:nth-child(2)::after{background:var(--sunset);}
+.col-item:nth-child(3)::after{background:var(--glass);}
+.col-item:hover::after{transform:scaleX(1);}
+
+/* ══════════════════════════════════════
+   FEATURED EDITION — desktop
+══════════════════════════════════════ */
+.featured{
+  display:grid;grid-template-columns:1fr 1fr;
+  min-height:80vh;
+}
+.featured-image{
+  background:var(--mid);
+  border-right:1px solid var(--rule-v);
+  display:flex;align-items:center;justify-content:center;
+  min-height:80vh;position:relative;
+}
+.featured-image img{width:70%;display:block;}
+.featured-tag{
+  position:absolute;top:1.4rem;left:1.4rem;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:0.52rem;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--sunset);display:flex;align-items:center;gap:0.5rem;
+}
+.featured-tag::before{content:'';width:1rem;height:1px;background:var(--sunset);}
+.featured-info{
+  padding:4rem 3rem;
+  display:flex;flex-direction:column;justify-content:space-between;
+}
+.featured-series{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:0.58rem;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--sunset);margin-bottom:1rem;
+  display:flex;align-items:center;gap:0.8rem;
+}
+.featured-series::before{content:'';width:1.5rem;height:1px;background:var(--sunset);}
+.featured-title{
+  font-family:'Lora',serif;font-weight:400;font-style:italic;
+  font-size:clamp(2.5rem,4vw,4rem);
+  line-height:1;letter-spacing:-0.01em;color:var(--ink);margin-bottom:1rem;
+}
+.featured-desc{
+  font-family:'Archivo',sans-serif;font-weight:400;
+  font-size:0.9rem;line-height:1.7;
+  color:var(--ink);opacity:0.6;max-width:36ch;margin-bottom:3rem;
+}
+.featured-meta{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:1.5rem;margin-bottom:3rem;
+}
+.meta-label{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:0.54rem;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:0.3rem;
+}
+.meta-value{
+  font-family:'Archivo',sans-serif;font-weight:600;
+  font-size:0.9rem;color:var(--ink);
+}
+.featured-price{
+  font-family:'Lora',serif;font-style:italic;
+  font-size:1.4rem;color:var(--ink);opacity:0.7;margin-bottom:0.3rem;
+}
+.featured-price-note{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:0.54rem;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:2rem;
+}
+.btn-primary{
+  font-family:'Archivo',sans-serif;font-weight:700;
+  font-size:0.72rem;letter-spacing:0.08em;
+  background:var(--ink);color:var(--bg);
+  border:none;padding:1rem 2rem;cursor:pointer;
+  display:inline-flex;align-items:center;gap:0.8rem;
+  text-decoration:none;width:fit-content;transition:opacity 0.2s;
+}
+.btn-primary:hover{opacity:0.85;}
+.btn-secondary{
+  font-family:'Archivo',sans-serif;font-weight:500;
+  font-size:0.65rem;letter-spacing:0.08em;
+  background:none;color:var(--ink);
+  border:1px solid var(--ink);padding:0.8rem 1.8rem;cursor:pointer;
+  display:inline-flex;align-items:center;gap:0.8rem;
+  text-decoration:none;margin-top:0.8rem;width:fit-content;opacity:0.55;
+  transition:background 0.2s,color 0.2s,opacity 0.2s;
+}
+.btn-secondary:hover{background:var(--ink);color:var(--bg);opacity:1;}
+
+/* ══════════════════════════════════════
+   GROUND MASS GRID — desktop
+══════════════════════════════════════ */
+.ground-mass-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+}
+.gm-item{
+  border-right:1px solid var(--rule-v);
+  cursor:pointer;transition:background 0.2s;
+  text-decoration:none;color:var(--ink);
+}
+.gm-item:last-child{border-right:none;}
+.gm-item:hover{background:var(--mid);}
+.gm-image{width:100%;overflow:hidden;}
+.gm-image img{
+  width:100%;aspect-ratio:1;object-fit:cover;display:block;
+  transition:transform 0.5s ease;
+}
+.gm-item:hover .gm-image img{transform:scale(1.04);}
+.gm-info{padding:1.4rem 2rem 2rem;}
+.gm-num{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:0.52rem;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:0.5rem;
+}
+.gm-title{
+  font-family:'Lora',serif;font-style:italic;
+  font-size:1.2rem;color:var(--ink);margin-bottom:0.4rem;
+}
+.gm-price{
+  font-family:'Lora',serif;font-style:italic;
+  font-size:0.9rem;color:var(--ink);opacity:0.55;
+}
+
+/* Scroll strip — hidden on desktop */
+.ground-mass-scroll{display:none;}
+.scroll-hint{display:none;}
+
+/* ══════════════════════════════════════
+   ELEMENTS — desktop
+══════════════════════════════════════ */
+.elements{
+  display:grid;grid-template-columns:1fr 1fr;
+  min-height:50vh;
+}
+.elements-left{
+  padding:4rem 3rem;
+  background:var(--ink);
+  display:flex;flex-direction:column;justify-content:center;
+  border-right:1px solid rgba(250,247,240,0.1);
+}
+.elements-tag{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:0.56rem;letter-spacing:0.28em;text-transform:uppercase;
+  color:var(--glass);margin-bottom:1.4rem;
+  display:flex;align-items:center;gap:0.8rem;
+}
+.elements-tag::before{content:'';width:1.5rem;height:1px;background:var(--glass);}
+.elements-title{
+  font-family:'Archivo',sans-serif;font-weight:900;
+  font-size:clamp(2rem,4vw,3.5rem);
+  letter-spacing:-0.03em;text-transform:uppercase;
+  color:var(--bg);line-height:0.95;margin-bottom:1.2rem;
+}
+.elements-desc{
+  font-family:'Archivo',sans-serif;font-weight:400;
+  font-size:0.9rem;line-height:1.7;
+  color:rgba(250,247,240,0.6);max-width:36ch;margin-bottom:2.4rem;
+}
+.elements-form{
+  display:flex;flex-direction:column;gap:0.8rem;max-width:340px;
+}
+.elements-input{
+  font-family:'IBM Plex Mono',monospace;font-size:0.7rem;
+  letter-spacing:0.06em;
+  background:rgba(250,247,240,0.08);
+  border:0.5px solid rgba(250,247,240,0.2);
+  color:var(--bg);padding:0.9rem 1rem;outline:none;
+  transition:border-color 0.2s;
+}
+.elements-input::placeholder{color:rgba(250,247,240,0.3);}
+.elements-input:focus{border-color:var(--glass);}
+.btn-glass{
+  font-family:'Archivo',sans-serif;font-weight:700;
+  font-size:0.65rem;letter-spacing:0.1em;
+  background:var(--glass);color:var(--ink);
+  border:none;padding:0.9rem 1.4rem;cursor:pointer;
+  transition:opacity 0.2s;text-align:center;
+}
+.btn-glass:hover{opacity:0.85;}
+.elements-note{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:0.52rem;letter-spacing:0.1em;
+  color:rgba(250,247,240,0.25);margin-top:0.4rem;
+}
+.elements-right{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:1px;background-color:rgba(44,38,54,0.1);
+}
+.element-preview{
+  background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  min-height:200px;overflow:hidden;
+}
+.element-preview img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  border:1px solid var(--rule-v);
+  transition:transform 0.5s ease;
+}
+.element-preview:hover img{transform:scale(1.06);}
+
+/* Mobile elements strip — hidden on desktop */
+.elements-mobile-strip{display:none;}
+
+/* ══════════════════════════════════════
+   STUDIO — desktop
+══════════════════════════════════════ */
+.studio{
+  display:grid;grid-template-columns:1fr 1fr;
+  padding:5rem 3rem;gap:5rem;align-items:center;
+}
+.studio-tag{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:0.56rem;letter-spacing:0.28em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:1.4rem;
+  display:flex;align-items:center;gap:0.8rem;
+}
+.studio-tag::before{content:'';width:1.5rem;height:1px;background:var(--muted);}
+.studio-title{
+  font-family:'Lora',serif;font-weight:400;
+  font-size:clamp(1.8rem,3vw,2.8rem);
+  line-height:1.15;color:var(--ink);margin-bottom:1.4rem;
+}
+.studio-title em{font-style:italic;}
+.studio-body{
+  font-family:'Archivo',sans-serif;font-weight:400;
+  font-size:0.95rem;line-height:1.75;
+  color:var(--ink);opacity:0.65;max-width:42ch;margin-bottom:1rem;
+}
+.studio-commission{
+  font-family:'Archivo',sans-serif;font-style:italic;
+  font-size:0.8rem;color:var(--blue);text-decoration:none;
+  border-bottom:1px solid rgba(46,45,128,0.2);
+  padding-bottom:0.2rem;
+  display:inline-flex;align-items:center;gap:0.6rem;
+  transition:border-color 0.2s;
+}
+.studio-commission:hover{border-color:var(--blue);}
+.studio-right{
+  display:grid;grid-template-columns:1fr 1fr;gap:1rem;
+}
+.studio-img{
+  aspect-ratio:3/4;background:var(--mid);
+  border-left:1px solid var(--rule-v);
+  display:flex;align-items:center;justify-content:center;
+}
+.studio-img:first-child{margin-top:3rem;}
+
+/* ══════════════════════════════════════
+   TIDE STRIP
+══════════════════════════════════════ */
+.tide-strip{
+  background:var(--ink);
+  padding:1.4rem 3rem;
+  display:grid;grid-template-columns:auto 1fr auto auto;
+  align-items:center;gap:3rem;
+}
+.tide-wordmark{
+  font-family:'Lora',serif;font-style:italic;
+  font-size:0.85rem;color:rgba(250,247,240,0.4);
+}
+.tide-data{display:flex;align-items:center;gap:2rem;}
+.tide-dot{
+  width:5px;height:5px;border-radius:50%;
+  background:var(--glass);
+  animation:pulse 2.5s ease-in-out infinite;
+}
+.tide-label{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:0.54rem;letter-spacing:0.18em;text-transform:uppercase;
+  color:rgba(250,247,240,0.3);
+}
+.tide-val{
+  font-family:'Archivo',sans-serif;font-weight:700;
+  font-size:1.1rem;letter-spacing:-0.02em;
+  color:rgba(250,247,240,0.85);
+}
+.tide-state{
+  font-family:'IBM Plex Mono',monospace;font-style:italic;
+  font-size:0.58rem;letter-spacing:0.1em;
+}
+.tide-coords{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:0.52rem;letter-spacing:0.08em;
+  color:rgba(250,247,240,0.2);
+}
+
+/* ══════════════════════════════════════
+   FOOTER
+══════════════════════════════════════ */
+footer{
+  padding:1.4rem 3rem;
+  display:grid;grid-template-columns:1fr auto 1fr;
+  align-items:center;
+}
+.footer-mark{
+  font-family:'Lora',serif;font-weight:400;
+  font-size:0.9rem;opacity:0.25;color:var(--ink);text-decoration:none;
+}
+.footer-mark em{font-style:italic;}
+.footer-links{display:flex;gap:2rem;list-style:none;}
+.footer-links a{
+  font-family:'Archivo',sans-serif;font-weight:400;
+  font-size:0.65rem;letter-spacing:0.06em;
+  color:var(--ink);text-decoration:none;opacity:0.35;
+  transition:opacity 0.18s;
+}
+.footer-links a:hover{opacity:1;}
+.footer-copy{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:0.52rem;letter-spacing:0.1em;
+  color:var(--muted);text-align:right;
+}
+
+/* ══════════════════════════════════════
+   ANIMATIONS
+══════════════════════════════════════ */
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.25}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(1rem)}to{opacity:1;transform:translateY(0)}}
+.hero-name{animation:fadeUp 0.7s ease both;}
+.hero-location{animation:fadeUp 0.7s 0.08s ease both;}
+.hero-statement{animation:fadeUp 0.7s 0.15s ease both;}
+
+/* ══════════════════════════════════════
+   MOBILE — @media overrides
+══════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* NAV */
+  nav{padding:1.2rem 1.4rem;}
+  .nav-links{display:none;}
+  .nav-menu-btn{
+    display:flex;flex-direction:column;gap:5px;
+    cursor:pointer;padding:4px;background:none;border:none;
+  }
+  .nav-menu-btn span{
+    display:block;width:22px;height:1px;background:var(--ink);
+  }
+
+  /* HERO */
+  .hero{
+    padding:2.8rem 1.4rem 0;
+    display:block;min-height:auto;
+  }
+  .hero-eyebrow{margin-bottom:1rem;}
+  .hero-name{font-size:3rem;margin-bottom:0.8rem;}
+  .hero-location{margin-bottom:1.8rem;}
+  .hero-statement{font-size:0.88rem;max-width:100%;margin-bottom:2.4rem;}
+
+  /* Hide desktop hero right, show mobile offset image */
+  .hero-right{display:none;}
+  .hero-image-offset{
+    display:block;
+    position:relative;
+    margin-left:10%;
+    margin-bottom:0;
+  }
+  .hero-image-offset::before{
+    content:'';position:absolute;
+    left:-10%;top:8%;bottom:8%;
+    width:2px;background:var(--glass);
+  }
+  .hero-image-offset img{width:100%;display:block;}
+  .hero-edition-tag-mobile{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.52rem;letter-spacing:0.18em;text-transform:uppercase;
+    color:var(--glass);
+    background:var(--ink);
+    padding:0.4rem 0.8rem;
+    display:inline-block;
+    margin-top:0.8rem;
+    margin-left:0;
+  }
+
+  /* SECTION LABEL */
+  .section-label{padding:0.8rem 1.4rem;margin-top:2.4rem;}
+
+  /* COLLECTIONS — vertical list */
+  .collections{display:flex;flex-direction:column;}
+  .col-item{
+    padding:1.8rem 1.4rem;
+    border-right:none;
+    border-bottom:0.5px solid var(--faint);
+    display:flex;justify-content:space-between;align-items:center;
+  }
+  .col-item:last-child{border-bottom:none;}
+  .col-num{margin-bottom:0.4rem;}
+  .col-title{font-size:1.6rem;}
+  .col-cta{display:none;}
+  .col-arrow{
+    font-family:'Archivo',sans-serif;font-size:1.2rem;
+    color:var(--ink);opacity:0.2;
+  }
+
+  /* FEATURED */
+  .featured{display:block;min-height:auto;}
+  .featured-image{
+    min-height:auto;padding:2rem 0;border-right:none;
+  }
+  .featured-image img{width:72%;}
+  .featured-info{padding:2rem 1.4rem;}
+  .featured-meta{gap:1rem;}
+  .featured-desc{max-width:100%;margin-bottom:2rem;}
+  .btn-primary{width:100%;justify-content:center;margin-bottom:0.8rem;}
+  .btn-secondary{width:100%;justify-content:center;}
+
+  /* GROUND MASS — hide desktop grid, show scroll */
+  .ground-mass-grid{display:none;}
+  .scroll-hint{
+    display:flex;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.5rem;letter-spacing:0.16em;text-transform:uppercase;
+    color:var(--muted);padding:0.6rem 1.4rem;
+    align-items:center;gap:0.5rem;
+  }
+  .scroll-hint::after{content:'→';font-size:0.7rem;}
+  .ground-mass-scroll{
+    display:flex;overflow-x:auto;scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;
+  }
+  .ground-mass-scroll::-webkit-scrollbar{display:none;}
+  .gm-scroll-item{
+    flex:0 0 72vw;
+    border-right:1px solid var(--rule-v);
+  }
+  .gm-scroll-item:last-child{border-right:none;}
+  .gm-scroll-item .gm-image img{
+    width:100%;aspect-ratio:1;object-fit:cover;display:block;
+  }
+  .gm-scroll-item .gm-info{padding:1rem 1.2rem 1.4rem;}
+
+  /* ELEMENTS — stack vertically */
+  .elements{display:block;}
+  .elements-left{padding:3rem 1.4rem;}
+  .elements-form{max-width:100%;}
+  .elements-right{display:none;}
+  .elements-mobile-strip{
+    display:flex;gap:1px;overflow:hidden;margin-top:1.4rem;
+  }
+  .elements-mobile-strip img{
+    width:25%;aspect-ratio:1;object-fit:cover;display:block;
+    opacity:0.7;border:1px solid var(--rule-v);
+  }
+
+  /* STUDIO */
+  .studio{
+    display:block;padding:3rem 1.4rem;
+  }
+  .studio-right{display:none;}
+  .studio-body{max-width:100%;}
+
+  /* TIDE STRIP */
+  .tide-strip{
+    padding:1rem 1.4rem;
+    grid-template-columns:auto 1fr auto;gap:1rem;
+  }
+  .tide-wordmark{display:none;}
+  .tide-coords{display:none;}
+
+  /* FOOTER */
+  footer{
+    padding:1.2rem 1.4rem;
+    display:flex;justify-content:space-between;
+  }
+  .footer-links{display:none;}
+  .footer-copy{text-align:right;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-wordmark">Studio <em>Pentire</em></a>
+  <ul class="nav-links">
+    <li><a href="studio-pentire-editions.html">Editions</a></li>
+    <li><a href="studio-pentire-elements.html">Elements</a></li>
+    <li><a href="studio-pentire-work.html">Illustration</a></li>
+    <li><a href="studio-pentire-studio.html">Studio</a></li>
+    <li><a href="mailto:hello@studiopentire.co.uk" class="cta">Commission</a></li>
+  </ul>
+  <button class="nav-menu-btn" onclick="openNav()" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE NAV OVERLAY -->
+<div class="nav-overlay" id="navOverlay">
+  <div class="nav-overlay-top">
+    <a href="#" class="nav-wordmark">Studio <em>Pentire</em></a>
+    <button class="nav-close" onclick="closeNav()">Close ×</button>
+  </div>
+  <ul class="nav-overlay-links">
+    <li><a href="studio-pentire-editions.html" onclick="closeNav()">Editions</a></li>
+    <li><a href="studio-pentire-elements.html" onclick="closeNav()">Elements</a></li>
+    <li><a href="studio-pentire-work.html" onclick="closeNav()">Illustration</a></li>
+    <li><a href="studio-pentire-studio.html" onclick="closeNav()">Studio</a></li>
+    <li><a href="mailto:hello@studiopentire.co.uk" onclick="closeNav()">Commission</a></li>
+  </ul>
+  <p class="nav-overlay-footer">Cornwall | UK | © 2026</p>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <p class="hero-eyebrow">Aureate — S/S 2026</p>
+    <h1 class="hero-name">Studio <em>Pentire</em></h1>
+    <p class="hero-location">Cornwall | UK | © 2026</p>
+    <p class="hero-statement">Authored illustration and curated print editions. Cut-out spatial work with a distinct visual language.</p>
+  </div>
+  <div class="hero-right">
+    <p class="hero-edition-tag">Aureate — S/S 2026</p>
+    <div class="hero-img-wrap">
+      <img src="/images/aureate-003.jpg" alt="Aureate Collection — Studio Pentire">
+    </div>
+  </div>
+</section>
+
+<!-- MOBILE HERO IMAGE -->
+<div class="hero-image-offset">
+  <img src="/images/aureate-001.jpg" alt="Aureate Collection">
+  <span class="hero-edition-tag-mobile">Ground-Mass / Aureate</span>
+</div>
+
+<!-- COLLECTIONS -->
+<div class="section-label">
+  <span>Collections</span>
+  <span>Spring / Summer 2026</span>
+</div>
+<div class="collections">
+  <a href="studio-pentire-editions.html" class="col-item">
+    <div>
+      <p class="col-num">001</p>
+      <h2 class="col-title">Ground-Mass</h2>
+      <p class="col-type">Print Series — Ongoing</p>
+      <span class="col-cta">View Editions →</span>
+    </div>
+    <span class="col-arrow">→</span>
+  </a>
+  <a href="studio-pentire-editions.html" class="col-item">
+    <div>
+      <p class="col-num">002</p>
+      <h2 class="col-title">Aureate</h2>
+      <p class="col-type">S/S 2026 Collection</p>
+      <span class="col-cta">View Prints →</span>
+    </div>
+    <span class="col-arrow">→</span>
+  </a>
+  <a href="studio-pentire-elements.html" class="col-item">
+    <div>
+      <p class="col-num">003</p>
+      <h2 class="col-title">Elements</h2>
+      <p class="col-type">Textures &amp; Collage Assets</p>
+      <span class="col-cta">Browse Library →</span>
+    </div>
+    <span class="col-arrow">→</span>
+  </a>
+</div>
+
+<!-- FEATURED EDITION -->
+<div class="section-label">
+  <span>Featured Edition</span>
+  <span>Aureate / Ground-Mass</span>
+</div>
+<section class="featured">
+  <div class="featured-image">
+    <p class="featured-tag">Aureate S/S 2026</p>
+    <img src="/images/aureate-001.jpg" alt="Threshold I — Aureate">
+  </div>
+  <div class="featured-info">
+    <div>
+      <p class="featured-series">Ground-Mass / Aureate</p>
+      <h2 class="featured-title">Threshold I</h2>
+      <p class="featured-desc">Archival pigment print on Hahnemühle Photo Rag. Part of the Aureate collection — the first seasonal release from Ground-Mass.</p>
+      <div class="featured-meta">
+        <div><p class="meta-label">Edition</p><p class="meta-value">1 of 50</p></div>
+        <div><p class="meta-label">Size</p><p class="meta-value">A2 · 420×594mm</p></div>
+        <div><p class="meta-label">Paper</p><p class="meta-value">Hahnemühle 308gsm</p></div>
+        <div><p class="meta-label">Finish</p><p class="meta-value">Signed &amp; numbered</p></div>
+      </div>
+    </div>
+    <div>
+      <p class="featured-price">£185</p>
+      <p class="featured-price-note">+ P&amp;P · Free UK delivery over £200</p>
+      <a href="mailto:hello@studiopentire.co.uk?subject=Enquiry — Threshold I" class="btn-primary">Enquire to buy →</a>
+      <a href="studio-pentire-editions.html" class="btn-secondary">View all editions</a>
+    </div>
+  </div>
+</section>
+
+<!-- GROUND MASS -->
+<div class="section-label">
+  <span>Ground-Mass Series</span>
+  <span>All editions</span>
+</div>
+<p class="scroll-hint">Scroll to browse</p>
+
+<!-- Desktop grid -->
+<div class="ground-mass-grid">
+  <a href="studio-pentire-editions.html" class="gm-item">
+    <div class="gm-image"><img src="/images/aureate-003.jpg" alt="Threshold I"></div>
+    <div class="gm-info">
+      <p class="gm-num">SP–001 / Aureate</p>
+      <p class="gm-title">Threshold I</p>
+      <p class="gm-price">£185</p>
+    </div>
+  </a>
+  <a href="studio-pentire-editions.html" class="gm-item">
+    <div class="gm-image"><img src="/images/element-01.jpg" alt="Aureate Field II"></div>
+    <div class="gm-info">
+      <p class="gm-num">SP–002 / Aureate</p>
+      <p class="gm-title">Aureate Field II</p>
+      <p class="gm-price">£185</p>
+    </div>
+  </a>
+  <a href="studio-pentire-editions.html" class="gm-item">
+    <div class="gm-image"><img src="/images/element-01.jpg" alt="Low Horizon"></div>
+    <div class="gm-info">
+      <p class="gm-num">SP–003 / Aureate</p>
+      <p class="gm-title">Low Horizon</p>
+      <p class="gm-price">£185</p>
+    </div>
+  </a>
+</div>
+
+<!-- Mobile scroll strip -->
+<div class="ground-mass-scroll">
+  <a href="studio-pentire-editions.html" class="gm-scroll-item">
+    <div class="gm-image"><img src="/images/element-01.jpg" alt="Threshold I"></div>
+    <div class="gm-info">
+      <p class="gm-num">SP–001 / Aureate</p>
+      <p class="gm-title">Threshold I</p>
+      <p class="gm-price">£185</p>
+    </div>
+  </a>
+  <a href="studio-pentire-editions.html" class="gm-scroll-item">
+    <div class="gm-image"><img src="/images/element-01.jpg" alt="Aureate Field II"></div>
+    <div class="gm-info">
+      <p class="gm-num">SP–002 / Aureate</p>
+      <p class="gm-title">Aureate Field II</p>
+      <p class="gm-price">£185</p>
+    </div>
+  </a>
+  <a href="studio-pentire-editions.html" class="gm-scroll-item">
+    <div class="gm-image"><img src="/images/element-01.jpg" alt="Low Horizon"></div>
+    <div class="gm-info">
+      <p class="gm-num">SP–003 / Aureate</p>
+      <p class="gm-title">Low Horizon</p>
+      <p class="gm-price">£185</p>
+    </div>
+  </a>
+</div>
+
+<!-- ELEMENTS -->
+<div class="section-label">
+  <span>Studio Elements</span>
+  <span>Free access · Aureate collection</span>
+</div>
+<section class="elements">
+  <div class="elements-left">
+    <p class="elements-tag">Free to access</p>
+    <h2 class="elements-title">Textures.<br>Shapes.<br>Collage.</h2>
+    <p class="elements-desc">A curated library of cut-out shapes, textures and collage elements drawn from each collection. Free to download and use.</p>
+    <div class="elements-form">
+      <input class="elements-input" type="email" placeholder="your@email.com">
+      <button class="btn-glass">Get access →</button>
+      <p class="elements-note">No spam. Unsubscribe anytime.</p>
+    </div>
+    <div class="elements-mobile-strip">
+      <img src="/images/aureate-002.jpg" alt="Element preview">
+      <img src="/images/aureate-001.jpg" alt="Element preview">
+      <img src="/images/element-02.jpg" alt="Element preview">
+      <img src="/images/element-02.jpg" alt="Element preview">
+    </div>
+  </div>
+  <div class="elements-right">
+    <div class="element-preview"><img src="/images/element-02.jpg" alt="Element preview"></div>
+    <div class="element-preview"><img src="/images/element-02.jpg" alt="Element preview"></div>
+    <div class="element-preview"><img src="/images/element-02.jpg" alt="Element preview"></div>
+    <div class="element-preview"><img src="/images/element-02.jpg" alt="Element preview"></div>
+  </div>
+</section>
+
+<!-- STUDIO -->
+<div class="section-label">
+  <span>The Studio</span>
+  <span>About</span>
+</div>
+<section class="studio">
+  <div class="studio-left">
+    <p class="studio-tag">Studio Pentire</p>
+    <h2 class="studio-title">An authored practice<br>from <em>Cornwall</em></h2>
+    <p class="studio-body">A creative studio looking out across the Celtic Sea towards the Atlantic. We make limited edition prints, authored illustration and curated creative resources.</p>
+    <p class="studio-body">Ground-Mass is the ongoing print series. Each seasonal collection explores abstraction, spatial collage and the landscape of the far west.</p>
+    <a href="mailto:hello@studiopentire.co.uk" class="studio-commission">Commission enquiries → hello@studiopentire.co.uk</a>
+  </div>
+  <div class="studio-right">
+    <div class="studio-img"></div>
+    <div class="studio-img" style="margin-top:3rem;"></div>
+  </div>
+</section>
+
+<!-- TIDEWATCH -->
+<div class="tide-strip">
+  <p class="tide-wordmark">Tidewatch</p>
+  <div class="tide-data">
+    <span class="tide-dot"></span>
+    <span class="tide-label">Sennen · Live tide</span>
+    <span class="tide-val" id="tideVal">—</span>
+    <span class="tide-state" id="tideState">—</span>
+  </div>
+  <div></div>
+  <p class="tide-coords">50.0731° N · 5.6991° W</p>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <a href="#" class="footer-mark">Studio <em>Pentire</em></a>
+  <ul class="footer-links">
+    <li><a href="studio-pentire-editions.html">Editions</a></li>
+    <li><a href="studio-pentire-elements.html">Elements</a></li>
+    <li><a href="studio-pentire-work.html">Illustration</a></li>
+    <li><a href="mailto:hello@studiopentire.co.uk">Commission</a></li>
+  </ul>
+  <p class="footer-copy">Cornwall | UK | © 2026</p>
+</footer>
+
+<script>
+function openNav(){document.getElementById('navOverlay').classList.add('open');}
+function closeNav(){document.getElementById('navOverlay').classList.remove('open');}
+
+const tides=[
+  {t:'low',time:'03:42',h:0.4},{t:'high',time:'09:58',h:5.6},
+  {t:'low',time:'16:14',h:0.5},{t:'high',time:'22:31',h:5.4}
+];
+const tfrac=s=>{const[h,m]=s.split(':').map(Number);return(h*60+m)/1440;};
+function tideAt(f){
+  const pts=tides.map(x=>{return{f:tfrac(x.time),h:x.h}}).sort((a,b)=>a.f-b.f);
+  let lo=pts[pts.length-1],hi=pts[0];
+  for(let i=0;i<pts.length-1;i++){if(f>=pts[i].f&&f<pts[i+1].f){lo=pts[i];hi=pts[i+1];break;}}
+  let sp=hi.f-lo.f;if(sp<=0)sp=1;
+  const t=Math.max(0,Math.min(1,(f-lo.f)/sp));
+  return lo.h+(hi.h-lo.h)*(1-Math.cos(t*Math.PI))/2;
+}
+function updateTide(){
+  const d=new Date();
+  const f=(d.getHours()*3600+d.getMinutes()*60+d.getSeconds())/86400;
+  const h=tideAt(f);
+  const rising=h>=tideAt(Math.max(0,f-0.0015));
+  document.getElementById('tideVal').textContent=h.toFixed(2)+'m';
+  const st=document.getElementById('tideState');
+  st.textContent=rising?'↑ rising':'↓ falling';
+  st.style.color=rising?'#5ee8ba':'#fbcda2';
+}
+updateTide();setInterval(updateTide,5000);
+</script>
+
+</body>
+</html>

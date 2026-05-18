@@ -1,0 +1,41 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "images"
+public_folder: "/images"
+
+collections:
+  - name: "editions"
+    label: "Editions"
+    folder: "_editions"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Reference", name: "ref", widget: "string", hint: "e.g. SP-001"}
+      - {label: "Series", name: "series", widget: "string", hint: "e.g. Ground-Mass / Aureate"}
+      - {label: "Collection", name: "collection", widget: "string", hint: "e.g. Aureate"}
+      - {label: "Description", name: "description", widget: "text"}
+      - {label: "Image", name: "image", widget: "image"}
+      - {label: "Price A4", name: "price_a4", widget: "number", hint: "e.g. 55"}
+      - {label: "Price A3", name: "price_a3", widget: "number", hint: "e.g. 85"}
+      - {label: "Price A2", name: "price_a2", widget: "number", hint: "e.g. 185"}
+      - {label: "Edition size", name: "edition_size", widget: "number", hint: "e.g. 50"}
+      - {label: "PayPal A4 button ID", name: "paypal_a4", widget: "string", required: false}
+      - {label: "PayPal A3 button ID", name: "paypal_a3", widget: "string", required: false}
+      - {label: "PayPal A2 button ID", name: "paypal_a2", widget: "string", required: false}
+      - {label: "Active", name: "active", widget: "boolean", default: true}
+
+  - name: "settings"
+    label: "Site Settings"
+    files:
+      - label: "General"
+        name: "general"
+        file: "_data/settings.yml"
+        fields:
+          - {label: "Studio name", name: "studio_name", widget: "string"}
+          - {label: "Tagline", name: "tagline", widget: "string"}
+          - {label: "Email", name: "email", widget: "string"}
+          - {label: "Current collection", name: "current_collection", widget: "string"}
+          - {label: "Current season", name: "current_season", widget: "string"}
