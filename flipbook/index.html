@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Flipbook</title>
+<style>
+  :root {
+    --mat: #3d6857;
+    --mat-line: rgba(255,255,255,0.07);
+    --mat-deep: #2c4f41;
+    --paper: #fbfaf7;
+    --text: #eef3ee;
+    --muted: #a9c2b6;
+    --ochre: #f0b429;
+    --ink: #1b1f24;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    color: var(--text);
+    background-color: var(--mat);
+    background-image:
+      linear-gradient(var(--mat-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--mat-line) 1px, transparent 1px);
+    background-size: 24px 24px;
+    display: flex; flex-direction: column;
+    user-select: none;
+  }
+  .bar { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; padding: 10px 16px; }
+  .group { display: flex; align-items: center; gap: 6px; }
+  button, select, input[type="number"] {
+    font: inherit; font-size: 14px;
+    color: var(--text); background: var(--mat-deep);
+    border: 0; border-radius: 6px; padding: 7px 11px; cursor: pointer;
+  }
+  input[type="number"] { width: 58px; padding: 6px 8px; cursor: text; }
+  button:hover, select:hover { background: #24443a; }
+  button.on { background: var(--ochre); color: var(--ink); }
+  button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--ochre); outline-offset: 2px; }
+  button:disabled { opacity: 0.6; cursor: wait; }
+  .swatch { width: 26px; height: 26px; padding: 0; border-radius: 50%; border: 2px solid transparent; }
+  .swatch.on { border-color: var(--paper); box-shadow: 0 0 0 2px var(--ochre); }
+  input[type="color"] { width: 28px; height: 28px; padding: 0; border: 0; background: none; cursor: pointer; }
+  input[type="range"] { accent-color: var(--ochre); width: 100px; }
+  label { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+  .stage { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 4px 16px; }
+  canvas#view {
+    background: var(--paper); max-width: 100%; max-height: 100%;
+    aspect-ratio: 16 / 9; touch-action: none; cursor: crosshair;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  }
+  .strip { display: flex; gap: 8px; overflow-x: auto; padding: 6px 16px 14px; }
+  .thumb { flex: 0 0 auto; padding: 0; border-radius: 3px; border: 2px solid transparent; background: none; position: relative; }
+  .thumb:hover { background: none; }
+  .thumb canvas { display: block; width: 96px; height: 54px; border-radius: 2px; }
+  .thumb.on { border-color: var(--ochre); }
+  .thumb span { position: absolute; left: 4px; bottom: 2px; font-size: 11px; color: var(--ink); opacity: 0.6; }
+  .count { font-size: 13px; color: var(--muted); min-width: 52px; }
+  .hint { font-size: 12px; color: var(--muted); margin-left: auto; }
+  @media (max-width: 700px) { .hint { display: none; } }
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div class="group" id="tools">
+    <button data-tool="brush" class="on">Brush</button>
+    <button data-tool="ellipse">Circle</button>
+    <button data-tool="rect">Box</button>
+    <button data-tool="line">Line</button>
+    <button data-tool="eraser">Eraser</button>
+  </div>
+  <div class="group" id="swatches"></div>
+  <label>Size <input type="range" id="size" min="2" max="120" value="14"></label>
+  <label>Opacity <input type="range" id="alpha" min="5" max="100" value="100"> <span id="alphaVal">100%</span></label>
+  <label>Blend
+    <select id="blend">
+      <option value="source-over">Normal</option>
+      <option value="multiply">Multiply</option>
+      <option value="overlay">Overlay</option>
+      <option value="screen">Screen</option>
+    </select>
+  </label>
+  <button id="fillBtn" class="on">Filled</button>
+  <button id="onionBtn" class="on">Onion skin</button>
+  <button id="undoBtn">Undo</button>
+  <button id="clearBtn">Clear frame</button>
+  <button id="photoBtn">Add photos</button>
+  <button id="noPhotoBtn">Remove photo</button>
+  <input type="file" id="photoInput" accept="image/*" multiple hidden>
+</div>
+
+<div class="stage"><canvas id="view"></canvas></div>
+
+<div class="bar">
+  <div class="group">
+    <button id="playBtn">Play</button>
+    <label>Speed <input type="range" id="fps" min="2" max="24" value="8"> <span id="fpsVal">8 fps</span></label>
+  </div>
+  <div class="group">
+    <button id="addBtn">New frame</button>
+    <button id="dupBtn">Duplicate</button>
+    <button id="delBtn">Delete</button>
+    <span class="count" id="count"></span>
+  </div>
+  <div class="group">
+    <label>Loops <input type="number" id="loops" min="1" max="50" value="3"></label>
+    <button id="saveBtn">Save video</button>
+  </div>
+  <span class="hint">Space play · N new · D duplicate · ← → move · Ctrl+Z undo</span>
+</div>
+
+<div class="strip" id="strip"></div>
+
+<script>
+const W = 960, H = 540, PAPER = '#fbfaf7';
+const COLOURS = ['#1b1f24', '#2c4bd6', '#e8472e', '#f0b429', '#1f9e8a', '#f4a3c4'];
+
+const view = document.getElementById('view');
+view.width = W; view.height = H;
+const vctx = view.getContext('2d');
+
+const canvas = () => { const c = document.createElement('canvas'); c.width = W; c.height = H; return c; };
+const mark = canvas(), mctx = mark.getContext('2d');       // the stroke or shape in progress
+const scratch = canvas(), sctx = scratch.getContext('2d'); // working space for blending
+
+let tool = 'brush', colour = COLOURS[0], size = 14, alpha = 1, blend = 'source-over';
+let filled = true, onion = true;
+let frames = [makeFrame()], cur = 0;
+let drawing = false, start = null, last = null;
+let playing = false, timer = null, fps = 8;
+
+function makeFrame(src) {
+  const c = canvas();
+  if (src) c.getContext('2d').drawImage(src.c, 0, 0);
+  return { c, bg: src ? src.bg : null, undo: [] };
+}
+const fctx = () => frames[cur].c.getContext('2d');
+
+// paper, then photo, then drawing
+function compose(ctx, f, w, h) {
+  ctx.fillStyle = PAPER; ctx.fillRect(0, 0, w, h);
+  if (f.bg) ctx.drawImage(f.bg, 0, 0, w, h);
+  ctx.drawImage(f.c, 0, 0, w, h);
+}
+
+// ---------- photos (greyscale, cropped to fill) ----------
+function loadPhoto(file) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const c = canvas(), x = c.getContext('2d');
+      const s = Math.max(W / img.width, H / img.height);
+      const w = img.width * s, h = img.height * s;
+      x.drawImage(img, (W - w) / 2, (H - h) / 2, w, h);
+      const d = x.getImageData(0, 0, W, H), p = d.data;
+      for (let i = 0; i < p.length; i += 4) {
+        const g = 0.299 * p[i] + 0.587 * p[i + 1] + 0.114 * p[i + 2];
+        p[i] = p[i + 1] = p[i + 2] = g;
+      }
+      x.putImageData(d, 0, 0);
+      URL.revokeObjectURL(img.src);
+      resolve(c);
+    };
+    img.onerror = reject;
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+// ---------- rendering ----------
+function render() {
+  const f = frames[cur];
+  vctx.fillStyle = PAPER; vctx.fillRect(0, 0, W, H);
+  if (f.bg) vctx.drawImage(f.bg, 0, 0);
+  if (onion && !playing && cur > 0) {
+    vctx.globalAlpha = 0.25; vctx.drawImage(frames[cur - 1].c, 0, 0); vctx.globalAlpha = 1;
+  }
+  if (drawing && tool === 'eraser') {
+    sctx.clearRect(0, 0, W, H);
+    sctx.drawImage(f.c, 0, 0);
+    sctx.save(); sctx.globalAlpha = alpha; sctx.globalCompositeOperation = 'destination-out';
+    sctx.drawImage(mark, 0, 0); sctx.restore();
+    vctx.drawImage(scratch, 0, 0);
+  } else {
+    vctx.drawImage(f.c, 0, 0);
+    if (drawing) {
+      vctx.save(); vctx.globalAlpha = alpha; vctx.globalCompositeOperation = blend;
+      vctx.drawImage(mark, 0, 0); vctx.restore();
+    }
+  }
+}
+
+// ---------- marks ----------
+function drawShape(ctx, a, b) {
+  ctx.save();
+  ctx.fillStyle = ctx.strokeStyle = colour;
+  ctx.lineWidth = size; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.beginPath();
+  if (tool === 'line') {
+    ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+  } else {
+    if (tool === 'ellipse') {
+      ctx.ellipse((a.x + b.x) / 2, (a.y + b.y) / 2, Math.abs(b.x - a.x) / 2, Math.abs(b.y - a.y) / 2, 0, 0, Math.PI * 2);
+    } else {
+      ctx.rect(Math.min(a.x, b.x), Math.min(a.y, b.y), Math.abs(b.x - a.x), Math.abs(b.y - a.y));
+    }
+    filled ? ctx.fill() : ctx.stroke();
+  }
+  ctx.restore();
+}
+function brushSeg(a, b) {
+  mctx.save();
+  mctx.strokeStyle = tool === 'eraser' ? '#000' : colour;
+  mctx.lineWidth = size; mctx.lineCap = 'round'; mctx.lineJoin = 'round';
+  mctx.beginPath(); mctx.moveTo(a.x, a.y); mctx.lineTo(b.x, b.y); mctx.stroke();
+  mctx.restore();
+}
+
+// Bake the finished mark into the frame's drawing layer
+function commit() {
+  const f = frames[cur], art = fctx();
+  if (tool === 'eraser') {
+    art.save(); art.globalAlpha = alpha; art.globalCompositeOperation = 'destination-out';
+    art.drawImage(mark, 0, 0); art.restore();
+  } else if (blend === 'source-over') {
+    art.save(); art.globalAlpha = alpha; art.drawImage(mark, 0, 0); art.restore();
+  } else {
+    // blend against everything underneath (paper, photo, drawing), then keep only the mark's area
+    compose(sctx, f, W, H);
+    sctx.save(); sctx.globalAlpha = alpha; sctx.globalCompositeOperation = blend;
+    sctx.drawImage(mark, 0, 0); sctx.restore();
+    sctx.save(); sctx.globalCompositeOperation = 'destination-in';
+    sctx.drawImage(mark, 0, 0); sctx.restore();
+    art.save(); art.globalCompositeOperation = 'destination-out';
+    art.drawImage(mark, 0, 0); art.restore();
+    art.drawImage(scratch, 0, 0);
+  }
+  mctx.clearRect(0, 0, W, H);
+}
+
+// ---------- drawing input ----------
+function pos(e) {
+  const r = view.getBoundingClientRect();
+  return { x: (e.clientX - r.left) * W / r.width, y: (e.clientY - r.top) * H / r.height };
+}
+function pushUndo() {
+  const f = frames[cur];
+  f.undo.push(fctx().getImageData(0, 0, W, H));
+  if (f.undo.length > 25) f.undo.shift();
+}
+const freehand = () => tool === 'brush' || tool === 'eraser';
+
+view.addEventListener('pointerdown', e => {
+  if (playing) stop();
+  view.setPointerCapture(e.pointerId);
+  drawing = true; start = last = pos(e);
+  pushUndo();
+  mctx.clearRect(0, 0, W, H);
+  if (freehand()) brushSeg(start, { x: start.x + 0.01, y: start.y });
+  render();
+});
+view.addEventListener('pointermove', e => {
+  if (!drawing) return;
+  const p = pos(e);
+  if (freehand()) { brushSeg(last, p); last = p; }
+  else { mctx.clearRect(0, 0, W, H); drawShape(mctx, start, p); }
+  render();
+});
+function endDraw() {
+  if (!drawing) return;
+  commit();
+  drawing = false;
+  render(); updateThumb(cur);
+}
+view.addEventListener('pointerup', endDraw);
+view.addEventListener('pointercancel', endDraw);
+
+// ---------- frame strip ----------
+const strip = document.getElementById('strip');
+function buildStrip() {
+  strip.innerHTML = '';
+  frames.forEach((f, i) => {
+    const b = document.createElement('button');
+    b.className = 'thumb' + (i === cur ? ' on' : '');
+    b.setAttribute('aria-label', 'Frame ' + (i + 1));
+    const t = document.createElement('canvas'); t.width = 192; t.height = 108;
+    b.appendChild(t);
+    const n = document.createElement('span'); n.textContent = i + 1; b.appendChild(n);
+    b.onclick = () => select(i);
+    strip.appendChild(b);
+    compose(t.getContext('2d'), f, t.width, t.height);
+  });
+  updateCount();
+}
+function updateThumb(i) {
+  const b = strip.children[i];
+  if (b) { const t = b.querySelector('canvas'); compose(t.getContext('2d'), frames[i], t.width, t.height); }
+}
+function updateCount() { document.getElementById('count').textContent = (cur + 1) + ' / ' + frames.length; }
+function highlight() {
+  [...strip.children].forEach((b, i) => b.classList.toggle('on', i === cur));
+  updateCount();
+  const on = strip.children[cur];
+  if (on) on.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+}
+function select(i) {
+  if (playing) stop();
+  cur = Math.max(0, Math.min(frames.length - 1, i));
+  render(); highlight();
+}
+function addFrame(dup) {
+  if (playing) stop();
+  frames.splice(cur + 1, 0, makeFrame(dup ? frames[cur] : null));
+  cur++; buildStrip(); render(); highlight();
+}
+function deleteFrame() {
+  if (playing) stop();
+  if (frames.length === 1) { pushUndo(); fctx().clearRect(0, 0, W, H); frames[0].bg = null; }
+  else { frames.splice(cur, 1); cur = Math.min(cur, frames.length - 1); }
+  buildStrip(); render(); highlight();
+}
+function undo() {
+  const f = frames[cur];
+  if (!f.undo.length) return;
+  fctx().putImageData(f.undo.pop(), 0, 0);
+  render(); updateThumb(cur);
+}
+
+// ---------- playback ----------
+const playBtn = document.getElementById('playBtn');
+function play() {
+  playing = true; playBtn.textContent = 'Stop'; playBtn.classList.add('on');
+  timer = setInterval(() => { cur = (cur + 1) % frames.length; render(); highlight(); }, 1000 / fps);
+}
+function stop() {
+  playing = false; clearInterval(timer);
+  playBtn.textContent = 'Play'; playBtn.classList.remove('on');
+  render();
+}
+playBtn.onclick = () => playing ? stop() : play();
+const fpsInput = document.getElementById('fps');
+fpsInput.oninput = () => {
+  fps = +fpsInput.value;
+  document.getElementById('fpsVal').textContent = fps + ' fps';
+  if (playing) { clearInterval(timer); play(); }
+};
+
+// ---------- export ----------
+const saveBtn = document.getElementById('saveBtn');
+saveBtn.onclick = async () => {
+  if (!window.MediaRecorder) { alert('This browser cannot record video. Try Chrome or Edge.'); return; }
+  if (playing) stop();
+  const loops = Math.max(1, Math.min(50, parseInt(document.getElementById('loops').value) || 1));
+  const types = ['video/webm;codecs=vp9', 'video/webm', 'video/mp4'];
+  const type = types.find(t => MediaRecorder.isTypeSupported(t)) || '';
+  const c = canvas(), x = c.getContext('2d');
+  compose(x, frames[0], W, H);
+  const rec = new MediaRecorder(c.captureStream(30), type ? { mimeType: type, videoBitsPerSecond: 8e6 } : undefined);
+  const chunks = [];
+  rec.ondataavailable = e => e.data.size && chunks.push(e.data);
+  const done = new Promise(r => rec.onstop = r);
+  saveBtn.textContent = 'Recording…'; saveBtn.disabled = true;
+  rec.start();
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  for (let l = 0; l < loops; l++) for (const f of frames) { compose(x, f, W, H); await wait(1000 / fps); }
+  rec.stop(); await done;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(chunks, { type: type || 'video/webm' }));
+  a.download = 'flipbook.' + (type.includes('mp4') ? 'mp4' : 'webm');
+  a.click();
+  saveBtn.textContent = 'Save video'; saveBtn.disabled = false;
+};
+
+// ---------- toolbar ----------
+document.querySelectorAll('#tools button').forEach(b => b.onclick = () => {
+  tool = b.dataset.tool;
+  document.querySelectorAll('#tools button').forEach(x => x.classList.toggle('on', x === b));
+});
+const sw = document.getElementById('swatches');
+COLOURS.forEach((c, i) => {
+  const b = document.createElement('button');
+  b.className = 'swatch' + (i === 0 ? ' on' : '');
+  b.style.background = c; b.setAttribute('aria-label', 'Colour ' + c);
+  b.onclick = () => setColour(c, b);
+  sw.appendChild(b);
+});
+const picker = document.createElement('input');
+picker.type = 'color'; picker.value = '#7a5cc2'; picker.title = 'Pick any colour';
+picker.oninput = () => setColour(picker.value, null);
+sw.appendChild(picker);
+function setColour(c, btn) {
+  colour = c;
+  sw.querySelectorAll('.swatch').forEach(x => x.classList.toggle('on', x === btn));
+}
+document.getElementById('size').oninput = e => size = +e.target.value;
+document.getElementById('alpha').oninput = e => {
+  alpha = e.target.value / 100;
+  document.getElementById('alphaVal').textContent = e.target.value + '%';
+};
+document.getElementById('blend').onchange = e => blend = e.target.value;
+const fillBtn = document.getElementById('fillBtn');
+fillBtn.onclick = () => { filled = !filled; fillBtn.classList.toggle('on', filled); fillBtn.textContent = filled ? 'Filled' : 'Outline'; };
+const onionBtn = document.getElementById('onionBtn');
+onionBtn.onclick = () => { onion = !onion; onionBtn.classList.toggle('on', onion); render(); };
+document.getElementById('undoBtn').onclick = undo;
+document.getElementById('clearBtn').onclick = () => { pushUndo(); fctx().clearRect(0, 0, W, H); render(); updateThumb(cur); };
+
+const photoInput = document.getElementById('photoInput');
+document.getElementById('photoBtn').onclick = () => photoInput.click();
+photoInput.onchange = async () => {
+  if (playing) stop();
+  const files = [...photoInput.files];
+  for (let i = 0; i < files.length; i++) {
+    try {
+      const bg = await loadPhoto(files[i]);
+      if (i > 0) { frames.splice(cur + 1, 0, makeFrame(null)); cur++; }
+      frames[cur].bg = bg;
+    } catch (err) { alert('Could not open ' + files[i].name); }
+  }
+  photoInput.value = '';
+  buildStrip(); render(); highlight();
+};
+document.getElementById('noPhotoBtn').onclick = () => { frames[cur].bg = null; render(); updateThumb(cur); };
+document.getElementById('addBtn').onclick = () => addFrame(false);
+document.getElementById('dupBtn').onclick = () => addFrame(true);
+document.getElementById('delBtn').onclick = deleteFrame;
+
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); undo(); return; }
+  if (e.key === ' ') { e.preventDefault(); playing ? stop() : play(); }
+  else if (e.key.toLowerCase() === 'n') addFrame(false);
+  else if (e.key.toLowerCase() === 'd') addFrame(true);
+  else if (e.key === 'ArrowRight') select(cur + 1);
+  else if (e.key === 'ArrowLeft') select(cur - 1);
+});
+
+buildStrip(); render();
+</script>
+</body>
+</html>
